@@ -140,11 +140,11 @@ class printers_list(osv.osv):
             raise osv.except_osv(_('Error'), _('File %s does not exists') % filename)
 
         commands = open(filename, 'r').read()
-        p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=True)
         if isinstance(commands, bytes):
-            p.communicate(commands)
+            print p.communicate(commands)
         else:
-            p.communicate(str(commands).encode())
+            print p.communicate(str(commands).encode())
         p.stdin.close()
 
         return True
