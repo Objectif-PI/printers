@@ -39,6 +39,7 @@
         'view/menu.xml',
         'view/printers.xml',
         'view/users.xml',
+        'view/server_action.xml',
         #'wizard/wizard.xml',
         #'report/report.xml',
         'data/printers.xml',
