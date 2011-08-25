@@ -34,9 +34,7 @@
                 <data>
                     <notebook position="inside">
                         <page string="Printing" attrs="{'invisible':[('state','!=','printing')]}">
-                            <field name="printing_source" attrs="{'required': [('state','=', 'printing')]}" colspan="4"/>
-                            <field name="printing_function" />
-                            <newline/>
+                            <label string="Use Administration->Printing->Printing Server Action instead of this form" colspan="4"/>
                         </page>
                     </notebook>
                 </data>
@@ -47,7 +45,7 @@
             <field name="name">ir.actions.server.tree</field>
             <field name="model">ir.actions.server</field>
             <field name="type">tree</field>
-            <field name="priority" eval="8"/>
+            <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <tree string="Print SA">
                     <field name="name"/>
@@ -65,7 +63,7 @@
             <field name="name">ir.actions.server.form</field>
             <field name="model">ir.actions.server</field>
             <field name="type">form</field>
-            <field name="priority" eval="8"/>
+            <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <form string="Print SA">
                     <field name="name" select="1"/>
