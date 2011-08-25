@@ -29,6 +29,12 @@
 
 from osv import fields
 from osv import osv
+from tools.translate import _
+import subprocess
+import os
+import netsvc
+
+logger = netsvc.Logger()
 
 
 class printers_server(osv.osv):
@@ -112,9 +118,12 @@ class printers_list(osv.osv):
     }
 
     def _command(self, cr, uid, printer_id, filename, context):
+        """
+        Use stdin to send data to the printer with lp or lpr command
+        """
         printer = self.browse(cr, uid, printer_id)
 
-        cmd = ['/usr/bin/lpr']
+        cmd = ['lpr']
         if printer.server_id.address:
             if printer.server_id.port != 0:
                 cmd.append('-H %s:%s' % (printer.server_id.address, str(printer.server_id.port)))
@@ -123,15 +132,25 @@ class printers_list(osv.osv):
 
             if printer.server_id.user:
                 cmd.append('-U %s' % printer.server_id.user)
-
         cmd.append('-P %s' % printer.code)
-        cmd.append('%s' % filename)
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
 
-        return ' '.join(cmd)
+        if not os.path.exists(filename):
+            raise osv.except_osv(_('Error'), _('File %s does not exists') % filename)
+
+        commands = open(filename, 'r').read()
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        if isinstance(commands, bytes):
+            p.communicate(commands)
+        else:
+            p.communicate(str(commands).encode())
+        p.stdin.close()
+
+        return True
 
     def send_printer(self, cr, uid, printer_id, filename, context):
         return self._command(cr, uid, printer_id, filename, context)
-
 
 printers_list()
 
