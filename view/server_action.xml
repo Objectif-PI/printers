@@ -35,6 +35,8 @@
                     <notebook position="inside">
                         <page string="Printing" attrs="{'invisible':[('state','!=','printing')]}">
                             <field name="printing_source" attrs="{'required': [('state','=', 'printing')]}" colspan="4"/>
+                            <field name="printing_function" />
+                            <newline/>
                         </page>
                     </notebook>
                 </data>

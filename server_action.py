@@ -44,11 +44,13 @@ class ir_actions_server(osv.osv):
             self._columns['state'].selection.append(('printing','Printing'))
 
     _columns = {
-        'printing_source': fields.char('Source', size=256, help='Add condition to found the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.name'),
+        'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.name'),
+        'printing_function': fields.char('Function', size=64, help='name of the function to launch for printing'),
     }
 
     _defaults = {
         'printing_source': lambda *a: False,
+        'printing_function': lambda *a: False,
     }
 
     def run(self, cr, uid, ids, context=None):
@@ -85,13 +87,15 @@ class ir_actions_server(osv.osv):
                     'u' : user,
                 }
                 try:
-                    printer_name = eval(str(action.printing_source), ctx)
+                    printer_id = eval(str(action.printing_source), ctx)
                 except Exception, e:
                     print str(e)
 
-                print 'Printer name: %s' % str(printer_name)
-                import pdb
-                pdb.set_trace()
+                logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % printer_id) 
+                print 'Printer ID: %d' % printer_id
+
+                if action.printing_function:
+                    getattr(obj, action.printing_function, None)(cr, uid, obj, context)
             else:
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context)
 
