@@ -43,5 +43,71 @@
             </field>
         </record>
 
+        <record id="view_server_action_redef_printing_tree" model="ir.ui.view">
+            <field name="name">ir.actions.server.tree</field>
+            <field name="model">ir.actions.server</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Print SA">
+                    <field name="name"/>
+                    <field name="model_id"/>
+                    <field name="state" invisible="1"/>
+                    <field name="sequence"/>
+                    <field name="condition"/>
+                    <field name="printing_function"/>
+                    <field name="printing_source"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_server_action_redef_printing_form" model="ir.ui.view">
+            <field name="name">ir.actions.server.form</field>
+            <field name="model">ir.actions.server</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Print SA">
+                    <field name="name" select="1"/>
+                    <field name="model_id"/>
+                    <field name="state" invisible="1"/>
+                    <field name="sequence"/>
+                    <field name="condition"/>
+                    <newline/>
+                    <field name="printing_source" colspan="4" required="1"/>
+                    <field name="printing_function" required="1"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_server_action_redef_printing_view">
+            <field name="name">Printing Server Action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.actions.server</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','=','printing')]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_open_server_action_redef_printing_view_form">
+            <field name="act_window_id" ref="act_open_server_action_redef_printing_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_server_action_redef_printing_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_open_server_action_redef_printing_view_tree">
+            <field name="act_window_id" ref="act_open_server_action_redef_printing_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_server_action_redef_printing_tree"/>
+        </record>
+
+        <menuitem id="menu_server_action_redef_printing"
+            parent="menu_admin_printing"
+            sequence="20"
+            action="act_open_server_action_redef_printing_view"/>
+
     </data>
 </openerp>
