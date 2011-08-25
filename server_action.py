@@ -95,7 +95,7 @@ class ir_actions_server(osv.osv):
                 print 'Printer ID: %d' % printer_id
 
                 if action.printing_function:
-                    getattr(obj, action.printing_function, None)(cr, uid, obj, context)
+                    getattr(obj, action.printing_function, None)(cr, uid, obj, printer_id, context)
             else:
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context)
 
