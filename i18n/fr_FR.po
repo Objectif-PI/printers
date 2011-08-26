@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
 "POT-Creation-Date: 2011-08-25 17:29:42+0000\n"
-"PO-Revision-Date: 2011-08-25 19:41+0100\n"
+"PO-Revision-Date: 2011-08-26 09:20+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -181,7 +181,7 @@ msgstr "Utiliser Administration->Impression->Serveur Action - Impression à la p
 #: field:printers.list,manufac_id:0
 #: view:printers.manufacturer:0
 msgid "Manufacturer"
-msgstr "Fabrican"
+msgstr "Fabricant"
 
 #. module: printers
 #: model:ir.actions.act_window,name:printers.res_printer_action
