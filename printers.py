@@ -141,10 +141,7 @@ class printers_list(osv.osv):
 
         commands = open(filename, 'r').read()
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=True)
-        if isinstance(commands, bytes):
-            print p.communicate(commands)
-        else:
-            print p.communicate(str(commands).encode())
+        print p.communicate(str(commands).encode())
         p.stdin.close()
 
         return True
