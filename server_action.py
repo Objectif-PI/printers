@@ -92,7 +92,6 @@ class ir_actions_server(osv.osv):
                     print str(e)
 
                 logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % printer_id) 
-                print 'Printer ID: %d' % printer_id
 
                 if action.printing_function:
                     getattr(obj, action.printing_function, None)(obj, printer_id, context)
