@@ -34,7 +34,7 @@
                 <data>
                     <notebook position="inside">
                         <page string="Printing" attrs="{'invisible':[('state','!=','printing')]}">
-                            <label string="Use Administration->Printing->Printing Server Action instead of this form" colspan="4"/>
+                            <label string="Use Administration->Printing->Printing Server Action instead of this form" colspan="4" align="0.0"/>
                         </page>
                     </notebook>
                 </data>
