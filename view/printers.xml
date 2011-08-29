@@ -87,6 +87,12 @@
                     <field name="type_id" select="2"/>
                     <field name="manufac_id" select="2"/>
                     <field name="active" select="2"/>
+                    <notebook colspan="4">
+                        <page string="Options">
+                            <separator string="Specify parameter for this printer" colspan="4"/>
+                            <field name="fitplot"/>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>

@@ -111,10 +111,12 @@ class printers_list(osv.osv):
         'type_id': fields.many2one('printers.type', 'Type', required=True),
         'active': fields.boolean('Active'),
         'manufac_id': fields.many2one('printers.manufacturer', 'Manufacturer', required=True),
+        'fitplot': fields.boolean('Fitplot', help='If check, scales the print file to fit on the page'),
     }
 
     _defaults = {
         'active': lambda *a: True,
+        'fitplot': lambda *a: False,
     }
 
     def _command(self, cr, uid, printer_id, filename, context):
@@ -123,16 +125,16 @@ class printers_list(osv.osv):
         """
         printer = self.browse(cr, uid, printer_id)
 
-        cmd = ['lpr']
+        cmd = ['lp']
         if printer.server_id.address:
             if printer.server_id.port != 0:
-                cmd.append('-H %s:%s' % (printer.server_id.address, str(printer.server_id.port)))
+                cmd.append('-h %s:%s' % (printer.server_id.address, str(printer.server_id.port)))
             else:
-                cmd.append('-H %s' % (printer.server_id.address))
+                cmd.append('-h %s' % (printer.server_id.address))
 
             if printer.server_id.user:
                 cmd.append('-U %s' % printer.server_id.user)
-        cmd.append('-P %s' % printer.code)
+        cmd.append('-d %s' % printer.code)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
 
@@ -141,8 +143,9 @@ class printers_list(osv.osv):
 
         commands = open(filename, 'r').read()
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=True)
-        print p.communicate(str(commands).encode())
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stdxxx %s' % str(p.communicate(commands))) 
         p.stdin.close()
+        del p
 
         return True
 
