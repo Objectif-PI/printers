@@ -119,11 +119,17 @@ class printers_list(osv.osv):
         'fitplot': lambda *a: False,
     }
 
-    def _command(self, cr, uid, printer_id, filename, context):
+    def _command(self, cr, uid, printer_id, filename, context=None):
         """
         Use stdin to send data to the printer with lp or lpr command
         """
-        printer = self.browse(cr, uid, printer_id)
+        if context is None:
+            context = {}
+
+        if not os.path.exists(filename):
+            raise osv.except_osv(_('Error'), _('File %s does not exists') % filename)
+
+        printer = self.browse(cr, uid, printer_id, context=context)
 
         cmd = ['lp']
         if printer.server_id.address:
@@ -142,9 +148,6 @@ class printers_list(osv.osv):
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
 
-        if not os.path.exists(filename):
-            raise osv.except_osv(_('Error'), _('File %s does not exists') % filename)
-
         commands = open(filename, 'r').read()
         p = subprocess.Popen(' '.join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (r_stdout, r_stderr) = p.communicate(commands)
@@ -155,7 +158,7 @@ class printers_list(osv.osv):
 
         return True
 
-    def send_printer(self, cr, uid, printer_id, filename, context):
+    def send_printer(self, cr, uid, printer_id, filename, context=None):
         return self._command(cr, uid, printer_id, filename, context)
 
 printers_list()
