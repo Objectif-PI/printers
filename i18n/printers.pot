@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 5.0.12\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2011-08-25 17:29:42+0000\n"
-"PO-Revision-Date: 2011-08-25 17:29:42+0000\n"
+"POT-Creation-Date: 2011-08-29 14:37:04+0000\n"
+"PO-Revision-Date: 2011-08-29 14:37:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,8 +46,8 @@ msgid "List of printing server"
 msgstr ""
 
 #. module: printers
-#: model:printers.language,name:printers.language_ps
-msgid "PostScript"
+#: help:printers.list,fitplot:0
+msgid "If check, scales the print file to fit on the page"
 msgstr ""
 
 #. module: printers
@@ -99,6 +99,11 @@ msgstr ""
 #. module: printers
 #: field:printers.type,description:0
 msgid "Description"
+msgstr ""
+
+#. module: printers
+#: field:printers.list,fitplot:0
+msgid "Fitplot"
 msgstr ""
 
 #. module: printers
@@ -273,6 +278,11 @@ msgid "Manage printers in OpenERP"
 msgstr ""
 
 #. module: printers
+#: view:printers.list:0
+msgid "Options"
+msgstr ""
+
+#. module: printers
 #: model:printers.language,name:printers.language_pcli
 msgid "PCL"
 msgstr ""
@@ -280,6 +290,11 @@ msgstr ""
 #. module: printers
 #: model:ir.model,name:printers.model_printers_list
 msgid "List of printers per server"
+msgstr ""
+
+#. module: printers
+#: view:printers.list:0
+msgid "Specify parameter for this printer"
 msgstr ""
 
 #. module: printers
@@ -294,8 +309,8 @@ msgid "Width"
 msgstr ""
 
 #. module: printers
-#: field:ir.actions.server,printing_source:0
-msgid "Source"
+#: model:printers.language,name:printers.language_ps
+msgid "PostScript"
 msgstr ""
 
 #. module: printers
@@ -314,6 +329,11 @@ msgstr ""
 #. module: printers
 #: field:printers.label,height:0
 msgid "Height"
+msgstr ""
+
+#. module: printers
+#: field:ir.actions.server,printing_source:0
+msgid "Source"
 msgstr ""
 
 #. module: printers

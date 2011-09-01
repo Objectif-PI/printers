@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2011-08-25 17:29:42+0000\n"
-"PO-Revision-Date: 2011-08-26 09:20+0100\n"
+"POT-Creation-Date: 2011-08-29 14:37:04+0000\n"
+"PO-Revision-Date: 2011-08-29 16:59+0100\n"
 "Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -45,9 +45,9 @@ msgid "List of printing server"
 msgstr "Liste des imprimantes par serveur"
 
 #. module: printers
-#: model:printers.language,name:printers.language_ps
-msgid "PostScript"
-msgstr "PostScript"
+#: help:printers.list,fitplot:0
+msgid "If check, scales the print file to fit on the page"
+msgstr "Si coché, "
 
 #. module: printers
 #: view:printers.list:0
@@ -99,6 +99,11 @@ msgstr "Imprimante thermique"
 #: field:printers.type,description:0
 msgid "Description"
 msgstr "Descriptif"
+
+#. module: printers
+#: field:printers.list,fitplot:0
+msgid "Fitplot"
+msgstr "Ajuster à la page"
 
 #. module: printers
 #: help:ir.actions.server,printing_source:0
@@ -279,6 +284,11 @@ msgid "Manage printers in OpenERP"
 msgstr "Nom de l'imprimante dans OpenERP"
 
 #. module: printers
+#: view:printers.list:0
+msgid "Options"
+msgstr "Options"
+
+#. module: printers
 #: model:printers.language,name:printers.language_pcli
 msgid "PCL"
 msgstr "PCL"
@@ -287,6 +297,11 @@ msgstr "PCL"
 #: model:ir.model,name:printers.model_printers_list
 msgid "List of printers per server"
 msgstr "Liste des imprimantes par serveur"
+
+#. module: printers
+#: view:printers.list:0
+msgid "Specify parameter for this printer"
+msgstr "Spécifier les paramètres pour cette imprimante"
 
 #. module: printers
 #: field:printers.language,code:0
@@ -300,9 +315,9 @@ msgid "Width"
 msgstr "Longueur"
 
 #. module: printers
-#: field:ir.actions.server,printing_source:0
-msgid "Source"
-msgstr "Source"
+#: model:printers.language,name:printers.language_ps
+msgid "PostScript"
+msgstr "PostScript"
 
 #. module: printers
 #: model:ir.actions.act_window,name:printers.res_printer_type_action
@@ -321,6 +336,11 @@ msgstr "Impression avec le SA"
 #: field:printers.label,height:0
 msgid "Height"
 msgstr "Hauteur"
+
+#. module: printers
+#: field:ir.actions.server,printing_source:0
+msgid "Source"
+msgstr "Source"
 
 #. module: printers
 #: model:printers.type,name:printers.type_thermal
