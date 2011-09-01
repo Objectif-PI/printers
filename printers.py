@@ -135,6 +135,10 @@ class printers_list(osv.osv):
             if printer.server_id.user:
                 cmd.append('-U %s' % printer.server_id.user)
         cmd.append('-d "%s"' % printer.code)
+
+        if printer.fitplot:
+            cmd.append('-o fitplot')
+
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
 
