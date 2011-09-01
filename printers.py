@@ -134,7 +134,7 @@ class printers_list(osv.osv):
 
             if printer.server_id.user:
                 cmd.append('-U %s' % printer.server_id.user)
-        cmd.append('-d %s' % printer.code)
+        cmd.append('-d "%s"' % printer.code)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
 
@@ -142,10 +142,12 @@ class printers_list(osv.osv):
             raise osv.except_osv(_('Error'), _('File %s does not exists') % filename)
 
         commands = open(filename, 'r').read()
-        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=True)
-        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stdxxx %s' % str(p.communicate(commands))) 
+        p = subprocess.Popen(' '.join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        (r_stdout, r_stderr) = p.communicate(commands)
         p.stdin.close()
-        del p
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'return: %s' % str(p.returncode)) 
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stdout: %s' % str(r_stdout)) 
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stderr: %s' % str(r_stderr)) 
 
         return True
 
