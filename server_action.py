@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    printers module for OpenERP, Manage printers in OpenERP
-#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>) 
+#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>)
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of printers
@@ -35,13 +35,13 @@ class ir_actions_server(osv.osv):
 
     def __init__(self, pool, cr):
         """
-        Extend to add 
+        Extend to add
         """
         super(ir_actions_server, self).__init__(pool, cr)
-        logger.notifyChannel('init:module printers ', netsvc.LOG_INFO, 'Add printing as key') 
+        logger.notifyChannel('init:module printers ', netsvc.LOG_INFO, 'Add printing as key')
         res = self._columns['state'].selection
         if 'printing' not in [k for k, v in res]:
-            self._columns['state'].selection.append(('printing','Printing'))
+            self._columns['state'].selection.append(('printing', 'Printing'))
 
     _columns = {
         'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.name'),
@@ -66,12 +66,12 @@ class ir_actions_server(osv.osv):
             obj_pool = self.pool.get(action.model_id.model)
             obj = obj_pool.browse(cr, uid, context['active_id'], context=context)
             ctx = {
-                'context':context,
+                'context': context,
                 'object': obj,
-                'time':time,
+                'time': time,
                 'cr': cr,
-                'pool' : self.pool,
-                'uid' : uid
+                'pool': self.pool,
+                'uid': uid
             }
             expr = eval(str(action.condition), ctx)
             if not expr:
@@ -80,18 +80,18 @@ class ir_actions_server(osv.osv):
 
             if action.state == 'printing':
                 user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
-                ctx  = {
-                    'c':context,
+                ctx = {
+                    'c': context,
                     'o': obj,
-                    'time':time,
-                    'u' : user,
+                    'time': time,
+                    'u': user,
                 }
                 try:
                     printer_id = eval(str(action.printing_source), ctx)
                 except Exception, e:
                     print str(e)
 
-                logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % printer_id) 
+                logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % str(printer_id))
 
                 if action.printing_function:
                     getattr(obj, action.printing_function, None)(obj, printer_id, context)

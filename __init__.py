@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    printers module for OpenERP, Manage printers in OpenERP
-#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>) 
+#    Copyright (C) 2011 SYLEAM (<http://www.syleam.fr/>)
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
 #
 #    This file is a part of printers

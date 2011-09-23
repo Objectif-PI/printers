@@ -146,7 +146,7 @@ class printers_list(osv.osv):
             cmd.append('-o fitplot')
 
         logger.notifyChannel('printers', netsvc.LOG_INFO, 'File to print: %s' % filename)
-        logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd)) 
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'Commande to execute: %s' % ' '.join(cmd))
 
         fp = open(filename, 'r')
         commands = fp.read()
@@ -155,9 +155,9 @@ class printers_list(osv.osv):
         p = subprocess.Popen(' '.join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (r_stdout, r_stderr) = p.communicate(commands)
         p.stdin.close()
-        logger.notifyChannel('printers', netsvc.LOG_INFO, 'return: %s' % str(p.returncode)) 
-        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stdout: %s' % str(r_stdout)) 
-        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stderr: %s' % str(r_stderr)) 
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'return: %s' % str(p.returncode))
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stdout: %s' % str(r_stdout))
+        logger.notifyChannel('printers', netsvc.LOG_INFO, 'stderr: %s' % str(r_stderr))
 
         os.remove(filename)
         del p
