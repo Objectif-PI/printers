@@ -1,0 +1,216 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    printers module for OpenERP, Allow to manage printers un OpenERP
+#    Copyright (C) 2011 SYLEAM Info Services (<http://www.Syleam.fr/>)
+#              Sylvain Garancher <sylvain.garancher@syleam.fr>
+#              Christophe CHAUVET <christophe.chauvet@syleam.fr>
+#
+#    This file is a part of printers
+#
+#    printers is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    printers is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+
+from osv import osv
+from osv import fields
+from tools.translate import _
+import subprocess
+import logging
+import netsvc
+
+logger = logging.getLogger('printers')
+
+class printers_server(osv.osv):
+    """
+    Manages printing servers
+    """
+    _name = 'printers.server'
+    _description = 'List of printing servers'
+    _order = 'server'
+    _rec_name = 'server'
+
+    _columns = {
+        'server': fields.char('Server', size=64, required=True, help='Name of the server'),
+        'address': fields.char('Address', size=15, required=True, help='IP address or hostname of the server'),
+        'port': fields.integer('Port', help='Port of the server'),
+        'user': fields.char('User', size=32, help='User to log in on the server'),
+        'password': fields.char('Password', size=32, help='Password to log in on the server'),
+        'active': fields.boolean('Active', help='If checked, this server is useable'),
+        'printer_ids': fields.one2many('printers.list', 'server_id', 'Printers List', help='List of printers available on this server'),
+    }
+
+printers_server()
+
+
+class printers_manufacturer(osv.osv):
+    """
+    Manage printer per manufacturer
+    """
+    _name = 'printers.manufacturer'
+    _description = 'Printer manufacturer'
+    _order = 'name'
+
+    _columns = {
+        'name': fields.char('Name', size=32, required=True, help='Name of this manufacturer'),
+        'code': fields.char('Code', size=16, help='Code of this manufacturer'),
+        'website': fields.char('Website', size=128, help='Website address of this manufacturer'),
+    }
+
+printers_manufacturer()
+
+
+class printers_type(osv.osv):
+    """
+    Printer per type
+    """
+    _name = 'printers.type'
+    _description = 'List of printers types'
+    _order = 'name'
+
+    _columns = {
+        'name': fields.char('Name', size=32, required=True, translate=True, help='Name of this type'),
+        'description': fields.char('Description', size=64, help='Description for this type'),
+    }
+
+printers_type()
+
+
+class printers_list(osv.osv):
+    """
+    Manage printers
+    """
+    _name = 'printers.list'
+    _description = 'List of printers per server'
+    _order = 'name'
+
+    _columns = {
+        'name': fields.char('Printer Name', size=64, required=True, help='Printer\'s name'),
+        'code': fields.char('Printer Code', size=64, required=True, help='Printer\'s code'),
+        'server_id': fields.many2one('printers.server', 'Server', required=True, help='Printer server'),
+        'type_id': fields.many2one('printers.type', 'Type', required=True, help='Printer type'),
+        'active': fields.boolean('Active', help='If checked, this link  printer/server is active'),
+        'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', required=True, help='Printer\'s manufacturer'),
+        'fitplot': fields.boolean('Fitplot', help='If checked, scales the print file to fit on the page'),
+    }
+
+    _defaults = {
+        'active': True,
+        'fitplot': False,
+    }
+
+    def _command(self, cr, uid, printer_id, report_id, print_ids, context=None):
+        """
+        Use stdin to send data to the printer with lp or lpr command
+        """
+        if not print_ids:
+            raise osv.except_osv(_('Error'), _('Missing ids to print report'))
+
+        # Retrieve printer
+        printer = self.browse(cr, uid, printer_id, context=context)
+
+        # Generate the command line
+        command = ['lp']
+        if printer.server_id.address:
+            # Add the server and port (if needed) in command line
+            if printer.server_id.port != 0:
+                command.append('-h %s:%s' % (printer.server_id.address, str(printer.server_id.port)))
+            else:
+                command.append('-h %s' % printer.server_id.address)
+
+            # Add the user login in command line
+            if printer.server_id.user:
+                command.append('-U %s' % printer.server_id.user)
+
+        # Add the printer code in command line
+        command.append('-d "%s"' % printer.code)
+
+        # Add the fitplot option in command line, if needed
+        if printer.fitplot:
+            command.append('-o fitplot')
+
+        # Create the command to send
+        command = ' '.join(command)
+
+        # Retrieve data to generate the report
+        report_data = self.pool.get('ir.actions.report.xml').read(cr, uid, report_id, ['model', 'report_name'], context=context)
+        report_service = netsvc.LocalService('report.' + report_data['report_name'])
+        datas = {'ids': print_ids, 'model': report_data['model']}
+
+        # Log the file name and command to send
+        logger.info('Object to print : %s (%s)' % (datas['model'], repr(datas['ids'][0])))
+        logger.info('Report to print : %s' % report_id)
+        logger.info('Command to execute : %s' % command)
+
+        # Generate the file to print
+        (print_commands, format) = report_service.create(cr, uid, print_ids, datas, context=context)
+
+        # Run the subprocess to send the commands to the server
+        sub_proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        (result_stdout, result_stderr) = sub_proc.communicate(print_commands)
+        sub_proc.stdin.close()
+
+        # Log the return values
+        logger.info('return : %s' % sub_proc.returncode)
+        logger.info('stdout : %s' % result_stdout)
+        logger.info('stderr : %s' % result_stderr)
+
+        # Remove the file and free the memory
+        del sub_proc
+        del print_commands
+
+        # Operation successful, return True
+        return True
+
+    def send_printer(self, cr, uid, printer_id, report_id, print_ids, context=None):
+        """
+        Sends a file to a printer
+        """
+        return self._command(cr, uid, printer_id, report_id, print_ids, context=context)
+
+printers_list()
+
+
+class printers_label(osv.osv):
+    """
+    Label board
+    """
+    _name = 'printers.label'
+    _description = 'Label board'
+
+    _columns = {
+        'type_id': fields.many2one('printers.type', 'Printer Type', required=True, help='Type of printer'),
+        'name': fields.char('Name', size=64, required=True, help='Name of the label'),
+        'width': fields.integer('Width', help='Width of the label, in millimeters'),
+        'height': fields.integer('Height', help='Height of the label, in millimeters'),
+    }
+
+printers_label()
+
+
+class printers_language(osv.osv):
+    """
+    Language support per printer
+    """
+    _name = 'printers.language'
+    _description = 'Printer language'
+
+    _columns = {
+        'name': fields.char('Name', size=32, required=True, translate=True, help='Name of the language'),
+        'code': fields.char('Code', size=16, required=True, help='Code of the language'),
+    }
+
+printers_language()
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
