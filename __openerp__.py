@@ -31,7 +31,7 @@
     'author': 'SYLEAM',
     'website': 'http://www.syleam.fr/',
     'depends': [
-        'base'
+        'base',
     ],
     'init_xml': [],
     'images': [],

@@ -32,6 +32,7 @@ import netsvc
 
 logger = logging.getLogger('printers')
 
+
 class printers_server(osv.osv):
     """
     Manages printing servers
