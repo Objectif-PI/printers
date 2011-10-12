@@ -25,7 +25,7 @@
 
 {
     'name': 'Printers',
-    'version': '1.0',
+    'version': '1.0.1',
     'category': 'Tools',
     'description': """Allow to manage printers un OpenERP""",
     'author': 'SYLEAM',
