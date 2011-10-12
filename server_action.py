@@ -133,7 +133,7 @@ class ir_actions_server(osv.osv):
 
                 # Print the requested ir.actions.report.xml
                 if report_id:
-                    self.pool.get('printers.list').send_printer(cr, uid, printer_id.id, report_id, [action_model.id], context=context)
+                    self.pool.get('printers.list').send_printer(cr, uid, printer_id, report_id, [action_model.id], context=context)
                 else:
                     raise osv.except_osv(_('Error'), _('Report to print not found !'))
 
