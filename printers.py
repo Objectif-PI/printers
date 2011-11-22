@@ -267,7 +267,7 @@ class printer_jasper_conf(osv.osv):
             data['form']['ids'] = object_ids
             data['model'] = this.model_id.model
 
-            jasper = netsvc.LocalService('report.print.jasper.server')
+            jasper = netsvc.LocalService('report.jasper.' + document.service)
             (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
 
             filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
