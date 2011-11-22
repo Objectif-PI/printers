@@ -101,7 +101,7 @@ class ir_actions_server(osv.osv):
                     if action.printing_function:
                         getattr(obj, action.printing_function, None)(obj, printer_id, context)
                 elif action.printing_configuration_type == 'auto':
-                    printer_jasper_conf_obj.run(cr, uid, [context['active_id']], model_id=action.model_id.id, expr_ctx=ctx, context=context)
+                    printer_jasper_conf_obj.run(cr, uid, [context['active_id']], model_id=action.model_id.id, expresssion_condition=ctx, context=context)
 
             else:
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context)

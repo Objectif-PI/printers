@@ -277,7 +277,6 @@ class printer_jasper_conf(osv.osv):
             printer_id = context.get('printer_id', this.printer_id.id)
             self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
 
-
 printer_jasper_conf()
 
 
