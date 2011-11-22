@@ -44,11 +44,13 @@ class ir_actions_server(osv.osv):
             self._columns['state'].selection.append(('printing', 'Printing'))
 
     _columns = {
+        'printing_configuration_type': fields.selection([('function', 'Use a function'), ('auto', 'Use configuration auto')], 'Type of configuration', help='You can selected your printer and jasper server by a python fonction\n or use the automatique configuration table'),
         'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.name'),
         'printing_function': fields.char('Function', size=64, help='name of the function to launch for printing'),
     }
 
     _defaults = {
+        'printing_configuration_type': lambda *a: 'function',
         'printing_source': lambda *a: False,
         'printing_function': lambda *a: False,
     }
@@ -59,6 +61,7 @@ class ir_actions_server(osv.osv):
         """
         if context is None:
             context = {}
+        printer_jasper_conf_obj = self.pool.get('printer.jasper.conf')
 
         result = False
         for action in self.browse(cr, uid, ids, context=context):
@@ -86,15 +89,20 @@ class ir_actions_server(osv.osv):
                     'time': time,
                     'u': user,
                 }
-                try:
-                    printer_id = eval(str(action.printing_source), ctx)
-                except Exception, e:
-                    print str(e)
+                if action.printing_configuration_type == 'function':
+                    try:
+                        printer_id = eval(str(action.printing_source), ctx)
 
-                logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % str(printer_id))
+                    except Exception, e:
+                        print str(e)
 
-                if action.printing_function:
-                    getattr(obj, action.printing_function, None)(obj, printer_id, context)
+                    logger.notifyChannel('server.action:printing', netsvc.LOG_DEBUG, 'Id of the printer: %s' % str(printer_id))
+
+                    if action.printing_function:
+                        getattr(obj, action.printing_function, None)(obj, printer_id, context)
+                elif action.printing_configuration_type == 'auto':
+                    printer_jasper_conf_obj.run(cr, uid, [context['active_id']], model_id=action.model_id.id, expr_ctx=ctx, context=context)
+
             else:
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context)
 

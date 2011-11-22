@@ -1,18 +1,19 @@
 # Translation of OpenERP Server.
 # This file contains the translation of the following modules:
-# * printers
+#	* printers
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: OpenERP Server 5.0.15\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2011-08-29 14:37:04+0000\n"
-"PO-Revision-Date: 2011-08-29 16:59+0100\n"
-"Last-Translator: Christophe Chauvet <christophe.chauvet@syleam.fr>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2011-11-22 13:00:54+0000\n"
+"PO-Revision-Date: 2011-11-22 13:00:54+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.3.0\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #. module: printers
 #: help:printers.label,height:0
@@ -20,19 +21,49 @@ msgid "Enter height in millimeter"
 msgstr "Entrer la hauteur en millimètre"
 
 #. module: printers
-#: constraint:ir.model:0
-msgid "The Object name must start with x_ and not contain any special character !"
-msgstr "Le nom de l'objet doit commencer par un x_ et ne dois pas contenir de caractère spéciaux"
+#: view:printer.jasper.conf:0
+msgid "Printer and document selected"
+msgstr "Imprimante et document à imprimer"
 
 #. module: printers
-#: model:ir.model,name:printers.model_printers_label
-msgid "Label board"
-msgstr "Planche d'étiquette"
+#: help:printer.jasper.conf,sequence:0
+msgid "Use to make a priority"
+msgstr "Utilisé pour faire une gestion de priorité"
+
+#. module: printers
+#: constraint:ir.model:0
+msgid "The Object name must start with x_ and not contain any special character !"
+msgstr "The Object name must start with x_ and not contain any special character !"
+
+#. module: printers
+#: field:printer.jasper.conf,jasper_document_id:0
+msgid "Document jasper"
+msgstr "Document jasper"
+
+#. module: printers
+#: help:printer.jasper.conf,jasper_document_id:0
+msgid "Document to print"
+msgstr "Document to print"
 
 #. module: printers
 #: view:printers.type:0
 msgid "Printer Type"
 msgstr "type d'imprimante"
+
+#. module: printers
+#: help:printer.jasper.conf,condition:0
+msgid "Add condition to validate the configuration to use, use:\n"
+"- c for context\n"
+"- o for object\n"
+"- time for date and hour\n"
+"- u for user\n"
+" eg: o.type == 'in'"
+msgstr "Add condition to validate the configuration to use, use:\n"
+"- c for context\n"
+"- o for object\n"
+"- time for date and hour\n"
+"- u for user\n"
+" eg: o.type == 'in'"
 
 #. module: printers
 #: model:printers.language,name:printers.language_epl2
@@ -55,9 +86,14 @@ msgid "Printers per server"
 msgstr "imprimantes par serveur"
 
 #. module: printers
+#: selection:ir.actions.server,printing_configuration_type:0
+msgid "Use a function"
+msgstr "Utiliser une fonction"
+
+#. module: printers
 #: constraint:ir.actions.act_window:0
 msgid "Invalid model name in the action definition."
-msgstr "Nom de modèle non valide pour cette action"
+msgstr "Nom de modèle invalide pour l'action définit"
 
 #. module: printers
 #: model:ir.module.module,shortdesc:printers.module_meta_information
@@ -71,6 +107,11 @@ msgid "Printer name"
 msgstr "Nom de l'imprimante"
 
 #. module: printers
+#: field:printers.label,width:0
+msgid "Width"
+msgstr "Longueur"
+
+#. module: printers
 #: field:printers.list,type_id:0
 msgid "Type"
 msgstr "Type"
@@ -81,9 +122,9 @@ msgid "Enter width in millimeter"
 msgstr "Entrer la taille en milimètre"
 
 #. module: printers
-#: model:printers.type,name:printers.type_matrix
-msgid "Matrix"
-msgstr "Matricielle"
+#: model:ir.model,name:printers.model_printers_label
+msgid "Label board"
+msgstr "Planche d'étiquette"
 
 #. module: printers
 #: field:ir.actions.server,printing_function:0
@@ -91,9 +132,20 @@ msgid "Function"
 msgstr "Fonction"
 
 #. module: printers
+#: model:ir.actions.act_window,name:printers.act_open_printer_jasper_conf_view
+#: model:ir.ui.menu,name:printers.menu_printer_jasper_conf
+msgid "Configuration auto"
+msgstr "Configuration automatique"
+
+#. module: printers
 #: model:printers.type,description:printers.type_thermal
 msgid "Thermal printer"
 msgstr "Imprimante thermique"
+
+#. module: printers
+#: field:printer.jasper.conf,printer_id:0
+msgid "Printer"
+msgstr "Printer"
 
 #. module: printers
 #: field:printers.type,description:0
@@ -106,21 +158,39 @@ msgid "Fitplot"
 msgstr "Ajuster à la page"
 
 #. module: printers
+#: help:printer.jasper.conf,default_user_printer:0
+msgid "If check and if the users has got a default printer use it"
+msgstr "Si coché, on utilise l'imprimante par défaut de l'utilisateur(si définit)"
+
+#. module: printers
+#: model:ir.model,name:printers.model_printer_jasper_conf
+msgid "Configure the jasper to print with the printer"
+msgstr "Configure le document jasper et l'imprimante"
+
+#. module: printers
 #: help:ir.actions.server,printing_source:0
-msgid ""
-"Add condition to found the id of the printer, use:\n"
+msgid "Add condition to found the id of the printer, use:\n"
 "- c for context\n"
 "- o for object\n"
 "- time for date and hour\n"
 "- u for user\n"
 " eg: o.warehouse_id.printer_id.name"
-msgstr ""
-"Ajouter une condition pour trouver l'id de l'imprimante, utiliser:\n"
+msgstr "Ajouter une condition pour trouver l'id de l'imprimante, utiliser:\n"
 "- c pour le context\n"
 "- o pour l'objet\n"
 "- time pour la date et heure\n"
 "- u pour l'utilisateur\n"
 "ex: o.warehouse_id.printer_id.name"
+
+#. module: printers
+#: field:printer.jasper.conf,sequence:0
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: printers
+#: selection:ir.actions.server,printing_configuration_type:0
+msgid "Use configuration auto"
+msgstr "Configuration automatique"
 
 #. module: printers
 #: field:res.users,context_printer_id:0
@@ -159,15 +229,16 @@ msgid "Address"
 msgstr "Adresse"
 
 #. module: printers
+#: field:printer.jasper.conf,active:0
 #: field:printers.list,active:0
 #: field:printers.server,active:0
 msgid "Active"
 msgstr "Active"
 
 #. module: printers
-#: field:printers.server,pass:0
-msgid "Password"
-msgstr "Mot de passe"
+#: view:printer.jasper.conf:0
+msgid "Configuration"
+msgstr "Configuration"
 
 #. module: printers
 #: model:printers.type,description:printers.type_laser
@@ -178,6 +249,12 @@ msgstr "Imprimante laser"
 #: view:ir.actions.server:0
 msgid "Use Administration->Printing->Printing Server Action instead of this form"
 msgstr "Utiliser Administration->Impression->Serveur Action - Impression à la place de ce formulaire"
+
+#. module: printers
+#: view:printer.jasper.conf:0
+#: field:printer.jasper.conf,condition:0
+msgid "Condition"
+msgstr "Condition"
 
 #. module: printers
 #: model:ir.actions.act_window,name:printers.res_printer_manufacturer_action
@@ -202,7 +279,7 @@ msgstr "Liste des types d'imprimante"
 #. module: printers
 #: constraint:ir.ui.view:0
 msgid "Invalid XML for View Architecture!"
-msgstr "XML non valide pour cette vue!"
+msgstr "Invalid XML for View Architecture!"
 
 #. module: printers
 #: model:printers.language,name:printers.language_escp2
@@ -220,6 +297,13 @@ msgstr "Laser"
 #: field:printers.manufacturer,name:0
 msgid "Name"
 msgstr "Nom"
+
+#. module: printers
+#: help:ir.actions.server,printing_configuration_type:0
+msgid "You can selected your printer and jasper server by a python fonction\n"
+" or use the automatique configuration table"
+msgstr "You can selected your printer and jasper server by a python fonction\n"
+" or use the automatique configuration table"
 
 #. module: printers
 #: model:ir.actions.act_window,name:printers.act_open_server_action_redef_printing_view
@@ -244,12 +328,22 @@ msgid "EPL 1 (line mode)"
 msgstr "EPL 1 (mode ligne)"
 
 #. module: printers
+#: help:printer.jasper.conf,active:0
+msgid "if check, this object is always available"
+msgstr "if check, this object is always available"
+
+#. module: printers
 #: model:ir.ui.menu,name:printers.menu_admin_printing_server
 #: field:printers.list,server_id:0
 #: view:printers.server:0
 #: field:printers.server,server:0
 msgid "Server"
 msgstr "Serveur"
+
+#. module: printers
+#: field:printers.manufacturer,website:0
+msgid "Website"
+msgstr "Site internet"
 
 #. module: printers
 #: view:ir.actions.server:0
@@ -277,6 +371,11 @@ msgstr "Erreur"
 #: field:printers.server,printer_ids:0
 msgid "Printer list"
 msgstr "Liste des imprimantes"
+
+#. module: printers
+#: field:printer.jasper.conf,model_id:0
+msgid "Model"
+msgstr "Model"
 
 #. module: printers
 #: model:ir.module.module,description:printers.module_meta_information
@@ -310,9 +409,9 @@ msgid "Code"
 msgstr "Code"
 
 #. module: printers
-#: field:printers.label,width:0
-msgid "Width"
-msgstr "Longueur"
+#: model:printers.type,name:printers.type_matrix
+msgid "Matrix"
+msgstr "Matricielle"
 
 #. module: printers
 #: model:printers.language,name:printers.language_ps
@@ -320,17 +419,24 @@ msgid "PostScript"
 msgstr "PostScript"
 
 #. module: printers
-#: model:ir.actions.act_window,name:printers.res_printer_type_action
-#: model:ir.ui.menu,name:printers.menu_admin_printing_printer_type
-#: field:printers.label,type_id:0
-#: field:printers.type,name:0
-msgid "Printer type"
-msgstr "Type d'imprimante"
+#: field:printer.jasper.conf,default_user_printer:0
+msgid "Printer of the user"
+msgstr "Imprimante de l'utilisateur"
 
 #. module: printers
 #: view:ir.actions.server:0
 msgid "Print SA"
 msgstr "Impression avec le SA"
+
+#. module: printers
+#: field:printers.server,pass:0
+msgid "Password"
+msgstr "Mot de passe"
+
+#. module: printers
+#: help:printer.jasper.conf,printer_id:0
+msgid "Printer use"
+msgstr "Printer use"
 
 #. module: printers
 #: field:printers.label,height:0
@@ -341,6 +447,14 @@ msgstr "Hauteur"
 #: field:ir.actions.server,printing_source:0
 msgid "Source"
 msgstr "Source"
+
+#. module: printers
+#: model:ir.actions.act_window,name:printers.res_printer_type_action
+#: model:ir.ui.menu,name:printers.menu_admin_printing_printer_type
+#: field:printers.label,type_id:0
+#: field:printers.type,name:0
+msgid "Printer type"
+msgstr "Type d'imprimante"
 
 #. module: printers
 #: model:printers.type,name:printers.type_thermal
@@ -355,15 +469,20 @@ msgid "Printer language"
 msgstr "Langage d'impression"
 
 #. module: printers
+#: field:ir.actions.server,printing_configuration_type:0
+msgid "Type of configuration"
+msgstr "Type of configuration"
+
+#. module: printers
 #: code:addons/printers/printers.py:0
 #, python-format
 msgid "File %s does not exists"
 msgstr "Le fichier %s n'existe pas"
 
 #. module: printers
-#: field:printers.manufacturer,website:0
-msgid "Website"
-msgstr "Site internet"
+#: help:printer.jasper.conf,model_id:0
+msgid "Select the model where the configuration is linked"
+msgstr "Select the model where the configuration is linked"
 
 #. module: printers
 #: field:printers.server,port:0

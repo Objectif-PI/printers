@@ -31,15 +31,16 @@
     'website': 'http://www.syleam.fr/',
     'depends': [
         'base',
+        'jasper_server',
     ],
     'init_xml': [],
     'update_xml': [
         #'security/groups.xml',
         'security/ir.model.access.csv',
         'view/menu.xml',
+        'view/server_action.xml',
         'view/printers.xml',
         'view/users.xml',
-        'view/server_action.xml',
         #'wizard/wizard.xml',
         #'report/report.xml',
         'data/printers.xml',

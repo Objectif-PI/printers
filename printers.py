@@ -33,6 +33,8 @@ from tools.translate import _
 import subprocess
 import os
 import netsvc
+import tempfile
+import time
 
 logger = netsvc.Logger()
 
@@ -202,5 +204,81 @@ class printers_language(osv.osv):
     }
 
 printers_language()
+
+
+class printer_jasper_conf(osv.osv):
+    _name = 'printer.jasper.conf'
+    _description = 'Configure the jasper to print with the printer'
+
+    _columns = {
+        'sequence': fields.integer('Sequence', required=True, help="Use to make a priority"),
+        'active': fields.boolean('Active', help='if check, this object is always available'),
+        'model_id': fields.many2one('ir.model', 'Model', required=True, help="Select the model where the configuration is linked"),
+        'condition': fields.text('Condition', required=True, help="Add condition to validate the configuration to use, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.type == 'in'"),
+        'printer_id': fields.many2one('printers.list', 'Printer', required=True, help="Printer use"),
+        'jasper_document_id': fields.many2one('jasper.document', 'Document jasper', required=True, help="Document to print"),
+        'default_user_printer': fields.boolean('Printer of the user', help="If check and if the users has got a default printer use it"),
+    }
+
+    _defaults = {
+        'sequence': lambda *a: 100,
+        'active': lambda *a: True,
+        'condition': lambda *a: 'True',
+        'default_user_printer': lambda *a: False,
+    }
+
+    def run(self, cr, uid, object_ids, model_id=None, expression_condition=None, context=None):
+        """
+        search the configuration to print and print it
+        """
+        jasper_document_obj = self.pool.get('jasper.document')
+
+        if model_id:
+            domain = [('model_id', '=', model_id)]
+        else:
+            domain = []
+
+        ids = self.search(cr, uid, domain, context=context)
+
+        if not expression_condition:
+            user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+            expression_condition = {
+                'c': context,
+                'time': time,
+                'u': user,
+            }
+
+        for this in self.browse(cr, uid, ids, context=context):
+            expr = eval(str(this.condition), expression_condition)
+            if not expr:
+                logger.notifyChannel('printer.jasper.conf', netsvc.LOG_DEBUG, 'This printer doesn t match with this object %s' % this.condition)
+                continue
+
+            document = jasper_document_obj.browse(cr, uid, this.jasper_document_id.id, context=context)
+            option = {
+                'id': document.id,
+                'attachment': document.attachment,
+                'attachment_use': document.attachment_use,
+            }
+            uri = '/openerp/bases/%s/%s' % (cr.dbname, document.report_unit)
+            data = {}
+            data['form'] = {}
+            data['form']['params'] = (document.format, uri, document.mode, document.depth, option)
+            data['form']['ids'] = object_ids
+            data['model'] = this.model_id.model
+
+            jasper = netsvc.LocalService('report.print.jasper.server')
+            (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
+
+            filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
+            file_pdf = open(filename[1], 'w')
+            file_pdf.write(res)
+            file_pdf.close()
+            printer_id = context.get('printer_id', this.printer_id.id)
+            self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
+
+
+printer_jasper_conf()
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

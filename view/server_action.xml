@@ -72,8 +72,11 @@
                     <field name="sequence"/>
                     <field name="condition"/>
                     <newline/>
-                    <field name="printing_source" colspan="4" required="1"/>
-                    <field name="printing_function" required="1"/>
+                    <field name="printing_configuration_type"/>
+                    <group colspan="4" attrs="{'invisible': [('printing_configuration_type', '!=', 'function')]}">
+                        <field name="printing_source" colspan="4" attrs="{'required': [('printing_configuration_type', '=', 'function')]}"/>
+                        <field name="printing_function" attrs="{'required': [('printing_configuration_type', '=', 'function')]}"/>
+                    </group>
                 </form>
             </field>
         </record>

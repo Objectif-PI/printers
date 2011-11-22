@@ -289,5 +289,69 @@
             parent="menu_admin_printing"
             action="res_printer_manufacturer_action"/>
 
+        <record id="view_printer_jasper_conf_tree" model="ir.ui.view">
+            <field name="name">printer.jasper.conf.tree</field>
+            <field name="model">printer.jasper.conf</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <tree string="Configuration">
+                <field name="sequence"/>
+                <field name="model_id"/>
+                <field name="printer_id"/>
+                <field name="jasper_document_id"/>
+            </tree>
+            </field>
+        </record>
+        
+        <record id="view_printer_jasper_conf_form" model="ir.ui.view">
+            <field name="name">printer.jasper.conf.form</field>
+            <field name="model">printer.jasper.conf</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+            <form string="Configuration">
+                <field name="sequence"/>
+                <field name="active" select="2"/>
+                <field name="model_id"/>
+                <field name="default_user_printer" select="2"/>
+                <separator string="Condition" colspan="4"/>
+                <field name="condition" colspan="4" nolabel="1"/>
+                <separator string="Printer and document selected" colspan="4"/>
+                <field name="printer_id"/>
+                <field name="jasper_document_id"/>
+            </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="act_open_printer_jasper_conf_view">
+            <field name="name">Configuration auto</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">printer.jasper.conf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_printer_jasper_conf_view_form">
+            <field name="act_window_id" ref="act_open_printer_jasper_conf_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_printer_jasper_conf_form"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="act_open_printer_jasper_conf_view_tree">
+            <field name="act_window_id" ref="act_open_printer_jasper_conf_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_printer_jasper_conf_tree"/>
+        </record>
+        
+        <menuitem id="menu_printer_jasper_conf"
+            parent="menu_server_action_redef_printing"
+            sequence="20"
+            action="act_open_printer_jasper_conf_view"/>
+
     </data>
 </openerp>
