@@ -276,6 +276,8 @@ class printer_jasper_conf(osv.osv):
             file_pdf.close()
             printer_id = context.get('printer_id', this.printer_id.id)
             self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
+            return True
+        return False
 
 printer_jasper_conf()
 
