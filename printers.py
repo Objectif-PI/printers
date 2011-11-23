@@ -227,6 +227,8 @@ class printer_jasper_conf(osv.osv):
         'default_user_printer': lambda *a: False,
     }
 
+    _order = 'model_id,sequence,printer_id,id'
+
     def run(self, cr, uid, object_ids, model_id=None, expression_condition=None, context=None):
         """
         search the configuration to print and print it
