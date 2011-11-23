@@ -234,6 +234,7 @@ class printer_jasper_conf(osv.osv):
         search the configuration to print and print it
         """
         jasper_document_obj = self.pool.get('jasper.document')
+        cr.commit()
 
         if model_id:
             domain = [('model_id', '=', model_id)]
@@ -242,8 +243,8 @@ class printer_jasper_conf(osv.osv):
 
         ids = self.search(cr, uid, domain, context=context)
 
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
         if not expression_condition:
-            user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
             expression_condition = {
                 'c': context,
                 'time': time,
@@ -276,7 +277,10 @@ class printer_jasper_conf(osv.osv):
             file_pdf = open(filename[1], 'w')
             file_pdf.write(res)
             file_pdf.close()
-            printer_id = context.get('printer_id', this.printer_id.id)
+            if this.default_user_printer:
+                printer_id = user.context_printer_id and user.context_printer_id.id or this.printer_id.id
+            else:
+                printer_id = this.printer_id.id
             self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
             return True
         return False
