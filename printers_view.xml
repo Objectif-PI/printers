@@ -56,7 +56,21 @@
                     <field name="active" select="2"/>
                     <field name="user"/>
                     <field name="password" password="True"/>
-                    <field name="printer_ids" nolabel="1" colspan="4"/>
+                    <field name="printer_ids" nolabel="1" colspan="4">
+                        <form string="Printers per server">
+                            <field name="name" select="1"/>
+                            <field name="code" select="1"/>
+                            <field name="type_id" select="2"/>
+                            <field name="manufacturer_id" select="2"/>
+                            <field name="active" select="2"/>
+                            <notebook colspan="4">
+                                <page string="Options">
+                                    <separator string="Specify parameter for this printer" colspan="4"/>
+                                    <field name="fitplot"/>
+                                </page>
+                            </notebook>
+                        </form>
+                    </field>
                 </form>
             </field>
         </record>
