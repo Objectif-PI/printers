@@ -37,7 +37,7 @@ class ir_actions_server(osv.osv):
     _inherit = 'ir.actions.server'
 
     _columns = {
-        'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.name'),
+        'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.id'),
         'printing_function': fields.char('Function', size=64, help='Name of the function to launch for printing.\nDEPRECATED'),
         'printing_report_id': fields.property('ir.actions.report.xml', method=True, string='Report', type='many2one', relation='ir.actions.report.xml', view_load=True, help='The report which will be printed'),
         'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml'),
