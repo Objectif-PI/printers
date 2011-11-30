@@ -57,6 +57,12 @@
                     <field name="user"/>
                     <field name="password" password="True"/>
                     <field name="printer_ids" nolabel="1" colspan="4">
+                        <tree string="Printer per server">
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="type_id"/>
+                            <field name="active"/>
+                        </tree>
                         <form string="Printers per server">
                             <field name="name" select="1"/>
                             <field name="code" select="1"/>
