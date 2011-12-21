@@ -24,7 +24,7 @@
 
 {
     'name': 'Printers',
-    'version': '0.1',
+    'version': '1.0.0',
     'category': 'Tools',
     'description': """Manage printers in OpenERP""",
     'author': 'SYLEAM',
