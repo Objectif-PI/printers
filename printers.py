@@ -234,7 +234,6 @@ class printer_jasper_conf(osv.osv):
         search the configuration to print and print it
         """
         jasper_document_obj = self.pool.get('jasper.document')
-        cr.commit()
 
         if model_id:
             domain = [('model_id', '=', model_id)]
@@ -270,19 +269,26 @@ class printer_jasper_conf(osv.osv):
             data['form']['ids'] = object_ids
             data['model'] = this.model_id.model
 
-            jasper = netsvc.LocalService('report.jasper.' + document.service)
-            (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
+            try:
+                jasper = netsvc.LocalService('report.jasper.' + document.service)
+                cr.commit()
+                (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
 
-            filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
-            file_pdf = open(filename[1], 'w')
-            file_pdf.write(res)
-            file_pdf.close()
-            if this.default_user_printer:
-                printer_id = user.context_printer_id and user.context_printer_id.id or this.printer_id.id
-            else:
-                printer_id = this.printer_id.id
-            self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
-            return True
+                filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
+                file_pdf = open(filename[1], 'w')
+                file_pdf.write(res)
+                file_pdf.close()
+                if this.default_user_printer:
+                    printer_id = user.context_printer_id and user.context_printer_id.id or this.printer_id.id
+                else:
+                    printer_id = this.printer_id.id
+                self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
+                return True
+            except Exception:
+                import traceback
+                import sys
+                logger.notifyChannel('printer.jasper.conf', netsvc.LOG_WARNING, '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)))
+                return False
         return False
 
 printer_jasper_conf()
