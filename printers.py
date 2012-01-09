@@ -270,7 +270,7 @@ class printer_jasper_conf(osv.osv):
             data['model'] = this.model_id.model
 
             try:
-                jasper = netsvc.LocalService('report.jasper.' + document.service)
+                jasper = netsvc.LocalService('report.print.jasper.server')
                 cr.commit()
                 (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
 
