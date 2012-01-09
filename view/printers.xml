@@ -16,7 +16,6 @@
                     <field name="address"/>
                     <field name="port"/>
                     <field name="user"/>
-                    <field name="pass"/>
                     <field name="active"/>
                 </tree>
             </field>
@@ -34,7 +33,7 @@
                     <field name="port"/>
                     <field name="active" select="2"/>
                     <field name="user"/>
-                    <field name="pass"/>
+                    <field name="pass" password="1"/>
                     <field name="printer_ids" nolabel="1" colspan="4"/>
                 </form>
             </field>
