@@ -274,15 +274,16 @@ class printer_jasper_conf(osv.osv):
                 cr.commit()
                 (res, format) = jasper.create(cr, uid, object_ids, data, context=context)
 
-                filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
-                file_pdf = open(filename[1], 'w')
+                fd, filename = tempfile.mkstemp(prefix='openerp_printer-', suffix='-report.%s' % format)
+                file_pdf = open(filename, 'w')
                 file_pdf.write(res)
                 file_pdf.close()
+                os.close(fd)
                 if this.default_user_printer:
                     printer_id = user.context_printer_id and user.context_printer_id.id or this.printer_id.id
                 else:
                     printer_id = this.printer_id.id
-                self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename[1], context=context)
+                self.pool.get('printers.list').send_printer(cr, uid, printer_id, filename, context=context)
                 return True
             except Exception:
                 import traceback
