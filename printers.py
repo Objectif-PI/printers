@@ -154,6 +154,8 @@ class printers_list(osv.osv):
         logger.info('Report to print : %s' % report_id)
         logger.info('Command to execute : %s' % command)
 
+        # The commit is necessary for Jasper find the data in PostgreSQL
+        cr.commit()
         # Generate the file to print
         (print_commands, format) = report_service.create(cr, uid, print_ids, datas, context=context)
 
