@@ -29,6 +29,7 @@ from tools.translate import _
 import subprocess
 import logging
 import netsvc
+import os
 
 logger = logging.getLogger('printers')
 
@@ -111,13 +112,10 @@ class printers_list(osv.osv):
         'fitplot': False,
     }
 
-    def _command(self, cr, uid, printer_id, report_id, print_ids, context=None):
+    def _command(self, cr, uid, printer_id, print_type, print_data, context=None):
         """
         Use stdin to send data to the printer with lp or lpr command
         """
-        if not print_ids:
-            raise osv.except_osv(_('Error'), _('Missing ids to print report'))
-
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
 
@@ -144,22 +142,40 @@ class printers_list(osv.osv):
         # Create the command to send
         command = ' '.join(command)
 
-        # Retrieve data to generate the report
-        report_data = self.pool.get('ir.actions.report.xml').read(cr, uid, report_id, ['model', 'report_name'], context=context)
-        report_service = netsvc.LocalService('report.' + report_data['report_name'])
-        datas = {'ids': print_ids, 'model': report_data['model']}
+        # Initialize printing data variable
+        print_commands = None
 
-        # Log the file name and command to send
-        logger.info('Object to print : %s (%s)' % (datas['model'], repr(datas['ids'][0])))
-        logger.info('Report to print : %s' % report_id)
-        logger.info('Command to execute : %s' % command)
+        if print_type == 'report':
+            # Retrieve data to generate the report
+            report_data = self.pool.get('ir.actions.report.xml').read(cr, uid, print_data['report_id'], ['model', 'report_name'], context=context)
+            report_service = netsvc.LocalService('report.' + report_data['report_name'])
+            datas = {'ids': print_data['print_ids'], 'model': report_data['model']}
 
-        # The commit is necessary for Jasper find the data in PostgreSQL
-        cr.commit()
-        # Generate the file to print
-        (print_commands, format) = report_service.create(cr, uid, print_ids, datas, context=context)
+            # Log the command to send
+            logger.info('Object to print : %s (%s)' % (datas['model'], repr(datas['ids'][0])))
+            logger.info('Report to print : %s (%s)' % (report_data['report_name'], print_data['report_id']))
+
+            # The commit is necessary for Jasper find the data in PostgreSQL
+            cr.commit()
+            # Generate the file to print
+            (print_commands, format) = report_service.create(cr, uid, print_data['print_ids'], datas, context=context)
+        elif print_type == 'file':
+            # Check if the file exists
+            if not os.path.exists(print_data['filename']):
+                raise osv.except_osv(_('Error'), _('File %s does not exist !') % print_data['filename'])
+
+            # Log the file name to print
+            logger.info('File to print : %s' % print_data['filename'])
+
+            # Retrieve contents of the file
+            print_file = open(print_data['filename'], 'r')
+            print_commands = print_file.read()
+            print_file.close()
+        else:
+            raise osv.except_osv(_('Error'), _('Unknown command type, unable to print !'))
 
         # Run the subprocess to send the commands to the server
+        logger.info('Command to execute : %s' % command)
         sub_proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (result_stdout, result_stderr) = sub_proc.communicate(print_commands)
         sub_proc.stdin.close()
@@ -178,9 +194,15 @@ class printers_list(osv.osv):
 
     def send_printer(self, cr, uid, printer_id, report_id, print_ids, context=None):
         """
+        Sends a report to a printer
+        """
+        return self._command(cr, uid, printer_id, 'report', {'report_id': report_id, 'print_ids': print_ids}, context=context)
+
+    def print_file(self, cr, uid, printer_id, filename, context=None):
+        """
         Sends a file to a printer
         """
-        return self._command(cr, uid, printer_id, report_id, print_ids, context=context)
+        return self._command(cr, uid, printer_id, 'file', {'filename': filename}, context=context)
 
 printers_list()
 
