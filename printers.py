@@ -171,6 +171,8 @@ class printers_list(osv.osv):
             print_file = open(print_data['filename'], 'r')
             print_commands = print_file.read()
             print_file.close()
+        elif print_type == 'raw':
+            print_commands = print_data
         else:
             raise osv.except_osv(_('Error'), _('Unknown command type, unable to print !'))
 
@@ -203,6 +205,12 @@ class printers_list(osv.osv):
         Sends a file to a printer
         """
         return self._command(cr, uid, printer_id, 'file', {'filename': filename}, context=context)
+
+    def print_raw_data(self, cr, uid, printer_id, data, context=None):
+        """
+        Sends a file to a printer
+        """
+        return self._command(cr, uid, printer_id, 'raw', data, context=context)
 
 printers_list()
 
