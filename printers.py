@@ -30,6 +30,8 @@ import subprocess
 import logging
 import netsvc
 import os
+import sys
+
 
 logger = logging.getLogger('printers')
 
@@ -116,6 +118,12 @@ class printers_list(osv.osv):
         """
         Use stdin to send data to the printer with lp or lpr command
         """
+
+        # lp command is not implemented on Windows
+        if sys.platform.startswith('win32'):
+            raise osv.except_osv(_('Error'), _('The actual Server OS is a Windows platform. ' \
+                                                'The printing lp command is not implemented. Unable to print !'))
+
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
 
