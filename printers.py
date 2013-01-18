@@ -31,6 +31,7 @@ import logging
 import netsvc
 import os
 import sys
+import cups
 
 
 logger = logging.getLogger('printers')
@@ -54,6 +55,26 @@ class printers_server(osv.osv):
         'active': fields.boolean('Active', help='If checked, this server is useable'),
         'printer_ids': fields.one2many('printers.list', 'server_id', 'Printers List', help='List of printers available on this server'),
     }
+
+
+    def update_printers(self, cr, uid, ids, context=None):
+        for server in self.browse(cr, uid, ids, context=context):
+            kwargs={'host': 'localhost'}
+            if server.port:
+                kwargs['port'] = int(server.port)
+            # Update Printers
+            connection = cups.Connection(**kwargs)
+            printers = connection.getPrinters()
+            existing_printer = [printer.code for printer in server.printer_ids]
+            for name, printer_info in printers.iteritems():
+                if not name in existing_printer:
+                    self.pool.get('printers.list').create(cr, uid, {
+                    'name': printer_info['printer-info'],
+                    'code': name,
+                    'server_id': server.id,
+                    })
+        return True
+
 
 printers_server()
 
@@ -103,9 +124,9 @@ class printers_list(osv.osv):
         'name': fields.char('Printer Name', size=64, required=True, help='Printer\'s name'),
         'code': fields.char('Printer Code', size=64, required=True, help='Printer\'s code'),
         'server_id': fields.many2one('printers.server', 'Server', required=True, help='Printer server'),
-        'type_id': fields.many2one('printers.type', 'Type', required=True, help='Printer type'),
+        'type_id': fields.many2one('printers.type', 'Type', help='Printer type'),
         'active': fields.boolean('Active', help='If checked, this link  printer/server is active'),
-        'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', required=True, help='Printer\'s manufacturer'),
+        'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', help='Printer\'s manufacturer'),
         'fitplot': fields.boolean('Fitplot', help='If checked, scales the print file to fit on the page'),
     }
 
