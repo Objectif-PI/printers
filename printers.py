@@ -23,8 +23,9 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
+from openerp.osv.orm import Model
+from openerp.osv import fields
+from openerp.osv.osv import except_osv
 from tools.translate import _
 import subprocess
 import logging
@@ -37,7 +38,7 @@ import cups
 logger = logging.getLogger('printers')
 
 
-class printers_server(osv.osv):
+class printers_server(Model):
     """
     Manages printing servers
     """
@@ -76,10 +77,7 @@ class printers_server(osv.osv):
         return True
 
 
-printers_server()
-
-
-class printers_manufacturer(osv.osv):
+class printers_manufacturer(Model):
     """
     Manage printer per manufacturer
     """
@@ -93,10 +91,8 @@ class printers_manufacturer(osv.osv):
         'website': fields.char('Website', size=128, help='Website address of this manufacturer'),
     }
 
-printers_manufacturer()
 
-
-class printers_type(osv.osv):
+class printers_type(Model):
     """
     Printer per type
     """
@@ -109,10 +105,8 @@ class printers_type(osv.osv):
         'description': fields.char('Description', size=64, help='Description for this type'),
     }
 
-printers_type()
 
-
-class printers_list(osv.osv):
+class printers_list(Model):
     """
     Manage printers
     """
@@ -142,7 +136,7 @@ class printers_list(osv.osv):
 
         # lp command is not implemented on Windows
         if sys.platform.startswith('win32'):
-            raise osv.except_osv(_('Error'), _('The actual Server OS is a Windows platform. ' \
+            raise except_osv(_('Error'), _('The actual Server OS is a Windows platform. ' \
                                                 'The printing lp command is not implemented. Unable to print !'))
 
         # Retrieve printer
@@ -191,7 +185,7 @@ class printers_list(osv.osv):
         elif print_type == 'file':
             # Check if the file exists
             if not os.path.exists(print_data['filename']):
-                raise osv.except_osv(_('Error'), _('File %s does not exist !') % print_data['filename'])
+                raise except_osv(_('Error'), _('File %s does not exist !') % print_data['filename'])
 
             # Log the file name to print
             logger.info('File to print : %s' % print_data['filename'])
@@ -203,7 +197,7 @@ class printers_list(osv.osv):
         elif print_type == 'raw':
             print_commands = print_data
         else:
-            raise osv.except_osv(_('Error'), _('Unknown command type, unable to print !'))
+            raise except_osv(_('Error'), _('Unknown command type, unable to print !'))
 
         # Run the subprocess to send the commands to the server
         logger.info('Command to execute : %s' % command)
@@ -241,10 +235,8 @@ class printers_list(osv.osv):
         """
         return self._command(cr, uid, printer_id, 'raw', data, context=context)
 
-printers_list()
 
-
-class printers_label(osv.osv):
+class printers_label(Model):
     """
     Label board
     """
@@ -258,10 +250,8 @@ class printers_label(osv.osv):
         'height': fields.integer('Height', help='Height of the label, in millimeters'),
     }
 
-printers_label()
 
-
-class printers_language(osv.osv):
+class printers_language(Model):
     """
     Language support per printer
     """
@@ -272,7 +262,4 @@ class printers_language(osv.osv):
         'name': fields.char('Name', size=32, required=True, translate=True, help='Name of the language'),
         'code': fields.char('Code', size=16, required=True, help='Code of the language'),
     }
-
-printers_language()
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

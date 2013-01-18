@@ -23,8 +23,9 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
+from openerp.osv.orm import Model
+from openerp.osv import fields
+from openerp.osv.osv import except_osv
 import traceback
 import logging
 import time
@@ -33,7 +34,7 @@ from tools.translate import _
 logger = logging.getLogger('printers')
 
 
-class ir_actions_server(osv.osv):
+class ir_actions_server(Model):
     _inherit = 'ir.actions.server'
 
     _columns = {
@@ -111,11 +112,11 @@ class ir_actions_server(osv.osv):
 
                     # Check if the printer was found
                     if not printer_id:
-                        raise osv.except_osv(_('Error'), _('Printer not found !'))
+                        raise except_osv(_('Error'), _('Printer not found !'))
 
                 except Exception, e:
                     logger.error(traceback.format_exc())
-                    raise osv.except_osv(_('Error'), _('Printer not found !'))
+                    raise except_osv(_('Error'), _('Printer not found !'))
 
                 # Get the report id
                 # TODO : Check for a specific function, on action_model, which will return False or a report id. If False is returned, use the report put in the printing_report_id.
@@ -135,7 +136,7 @@ class ir_actions_server(osv.osv):
                 if report_id:
                     self.pool.get('printers.list').send_printer(cr, uid, printer_id, report_id, [action_model.id], context=context)
                 else:
-                    raise osv.except_osv(_('Error'), _('Report to print not found !'))
+                    raise except_osv(_('Error'), _('Report to print not found !'))
 
             # If the state is not 'printing', let the server action run itself
             else:
@@ -147,7 +148,5 @@ class ir_actions_server(osv.osv):
         model_obj = self.pool.get('ir.model')
         model = model_obj.browse(cr, uid, model_id, context=context)
         return {'value': {'model_name': model.model}}
-
-ir_actions_server()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
