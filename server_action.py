@@ -40,7 +40,7 @@ class ir_actions_server(osv.osv):
         'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.id'),
         'printing_function': fields.char('Function', size=64, help='Name of the function to launch for printing.\nDEPRECATED'),
         'printing_report_id': fields.property('ir.actions.report.xml', method=True, string='Report', type='many2one', relation='ir.actions.report.xml', view_load=True, help='The report which will be printed'),
-        'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml'),
+        'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml', readonly=True),
     }
 
     _defaults = {
@@ -142,6 +142,11 @@ class ir_actions_server(osv.osv):
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context=context)
 
         return result
+
+    def onchange_model_id(self, cr, uid, ids, model_id, context=None):
+        model_obj = self.pool.get('ir.model')
+        model = model_obj.browse(cr, uid, model_id, context=context)
+        return {'value': {'model_name': model.model}}
 
 ir_actions_server()
 
