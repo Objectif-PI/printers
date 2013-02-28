@@ -103,6 +103,7 @@ class printers_type(Model):
     _columns = {
         'name': fields.char('Name', size=32, required=True, translate=True, help='Name of this type'),
         'description': fields.char('Description', size=64, help='Description for this type'),
+        'printer_ids': fields.one2many('printers.list', 'type_id', 'Printers'),
     }
 
 
