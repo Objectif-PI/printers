@@ -46,6 +46,12 @@
             <field name="width">32</field>
             <field name="height">25</field>
         </record>
+        <record model="printers.label" id="label_100x150">
+            <field name="name">Label 10x15 thermal direct</field>
+            <field name="type_id" ref="type_thermal"/>
+            <field name="width">100</field>
+            <field name="height">150</field>
+        </record>
         <record model="printers.label" id="label_a3">
             <field name="name">A3</field>
             <field name="type_id" ref="type_laser"/>
