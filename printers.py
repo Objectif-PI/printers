@@ -56,6 +56,14 @@ class printers_server(osv.osv):
         'password': fields.char('Password', size=32, help='Password to log in on the server'),
         'active': fields.boolean('Active', help='If checked, this server is useable'),
         'printer_ids': fields.one2many('printers.list', 'server_id', 'Printers List', help='List of printers available on this server'),
+        'custom_user': fields.boolean('Custom User', help='Check this, if you want to use OpenERP User Name, instead of a specific user'),
+    }
+
+    _defaults = {
+        'address': '127.0.0.1',
+        'active': True,
+        'port': 0,
+        'custom_user': False,
     }
 
 printers_server()
