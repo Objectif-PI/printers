@@ -27,6 +27,7 @@ from openerp.osv import osv
 from openerp.osv import fields
 from tools.translate import _
 from openerp.modules import get_module_path
+import unicodedata
 import subprocess
 import logging
 import netsvc
@@ -38,6 +39,9 @@ import time
 
 logger = logging.getLogger('printers')
 
+def convert(name):
+    """Convert data with no accent and upper mode"""
+    return unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').replace('&', '').replace('_', '')
 
 class printers_server(osv.osv):
     """
@@ -154,7 +158,7 @@ class printers_list(osv.osv):
             if printer.server_id.user and not printer.server_id.custom_user:
                 command.append('-U %s' % printer.server_id.user)
             elif printer.server_id.custom_user:
-                command.append('-U "%s"' % user.name)
+                command.append('-U "%s"' % convert(user.name))
 
         # Add the printer code in command line
         command.append('-d "%s"' % printer.code)
