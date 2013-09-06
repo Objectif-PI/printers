@@ -232,7 +232,13 @@ class printers_list(osv.osv):
         """
         Sends a file to a printer
         """
-        return self._command(cr, uid, printer_id, 'file', {'filename': filename}, context=context)
+        if context is None:
+            context = {}
+
+        ctx = context.copy()
+        if filename and not context.get('jobname'):
+            ctx['jobname'] = filename.split('/')[-1]
+        return self._command(cr, uid, printer_id, 'file', {'filename': filename}, context=ctx)
 
     def print_raw_data(self, cr, uid, printer_id, data, context=None):
         """
@@ -250,7 +256,7 @@ class printers_list(osv.osv):
         for printer in self.browse(cr, uid, ids, context=context):
             ctx = context.copy()
             filename = "/tmp/test-printer-openerp-%d.pdf" % printer.id
-            ctx['jobname'] = 'OpenERP Test Page for %d' % printer.id
+            ctx['jobname'] = 'OpenERP Test Page (id: %d)' % printer.id
 
             c = canvas.Canvas(filename)
             c.drawString(100, 805, "Welcome to OpenERP printers module")
