@@ -233,27 +233,27 @@ class printers_list(osv.osv):
 
     def print_test(self, cr, uid, ids, context=None):
         """
-        Compose a PDF, and send it to the printer
+        Compose a PDF with printer information, and send it to the printer
         """
         for printer in self.browse(cr, uid, ids, context=context):
             filename = "/tmp/test-printer-openerp-%d.pdf" % printer.id
             c = canvas.Canvas(filename)
-            c.drawString(100,805, "Welcome to OpenERP printers module")
-            c.drawString(100,765, "Printer: %s" % printer.name)
+            c.drawString(100, 805, "Welcome to OpenERP printers module")
+            c.drawString(100, 765, "Printer: %s" % printer.name)
             c.line(138, 760, 400, 760)
-            c.drawString(100,740, "Serveur: %s" % printer.server_id.server)
+            c.drawString(100, 740, "Serveur: %s" % printer.server_id.server)
             c.line(145, 735, 400, 735)
-            c.drawString(480,805, time.strftime('%Y-%m-%d'))
+            c.drawString(480, 805, time.strftime('%Y-%m-%d'))
 
             # Draw Rectangle
-            c.line(20,20,570,20)
-            c.line(20,820,570,820)
-            c.line(20,20,20,820)
-            c.line(570,820,570,20)
+            c.line(20, 20, 570, 20)
+            c.line(20, 820, 570, 820)
+            c.line(20, 20, 20, 820)
+            c.line(570, 820, 570, 20)
 
             # Titre en Haut
-            c.line(20,800,570,800)
-            c.line(450,800,450,820)
+            c.line(20, 800, 570, 800)
+            c.line(450, 800, 450, 820)
 
             # Add logo
             c.drawImage(os.path.join(get_module_path('printers'), 'static', 'src', 'img', 'logo.jpg'), 25, 730, 64, 64)
