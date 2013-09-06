@@ -129,6 +129,8 @@ class printers_list(osv.osv):
         """
         Use stdin to send data to the printer with lp or lpr command
         """
+        if context is None:
+            context = {}
 
         # lp command is not implemented on Windows
         if sys.platform.startswith('win32'):
@@ -156,6 +158,10 @@ class printers_list(osv.osv):
 
         # Add the printer code in command line
         command.append('-d "%s"' % printer.code)
+
+        # Add Job name if define on the context
+        if context.get('jobname', ''):
+            command.append('-t "%s"' % context['jobname'])
 
         # Add the fitplot option in command line, if needed
         if printer.fitplot:
@@ -238,8 +244,14 @@ class printers_list(osv.osv):
         """
         Compose a PDF with printer information, and send it to the printer
         """
+        if context is None:
+            context = {}
+
         for printer in self.browse(cr, uid, ids, context=context):
+            ctx = context.copy()
             filename = "/tmp/test-printer-openerp-%d.pdf" % printer.id
+            ctx['jobname'] = 'OpenERP Test Page for %d' % printer.id
+
             c = canvas.Canvas(filename)
             c.drawString(100, 805, "Welcome to OpenERP printers module")
             c.drawString(100, 765, "Printer: %s" % printer.name)
@@ -261,7 +273,9 @@ class printers_list(osv.osv):
             # Add logo
             c.drawImage(os.path.join(get_module_path('printers'), 'static', 'src', 'img', 'logo.jpg'), 25, 730, 64, 64)
             c.save()
-            self.print_file(cr, uid, printer.id, filename, context=context)
+
+            # Send this file to the printer
+            self.print_file(cr, uid, printer.id, filename, context=ctx)
 
         return True
 
