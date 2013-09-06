@@ -120,6 +120,9 @@
                     <field name="type_id" select="2"/>
                     <field name="manufacturer_id" select="2"/>
                     <field name="active" select="2"/>
+                    <group colspan="4">
+                        <button string="Test Page" icon="gtk-print" type="object" name="print_test" colspan="4"/>
+                    </group>
                     <notebook colspan="4">
                         <page string="Options">
                             <separator string="Specify parameter for this printer" colspan="4"/>
