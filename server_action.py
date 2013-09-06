@@ -41,6 +41,7 @@ class ir_actions_server(osv.osv):
         'printing_function': fields.char('Function', size=64, help='Name of the function to launch for printing.\nDEPRECATED'),
         'printing_report_id': fields.property('ir.actions.report.xml', method=True, string='Report', type='many2one', relation='ir.actions.report.xml', view_load=True, help='The report which will be printed'),
         'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml'),
+        'printing_jobname': fields.char('JobName', size=256, help='Add Job Name base on browse on the objectuse:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.number on invoice'),
     }
 
     _defaults = {
@@ -72,6 +73,7 @@ class ir_actions_server(osv.osv):
         for action in self.browse(cr, uid, ids, context=context):
             logger.debug('Action : %s' % action.name)
 
+            ctx = context.copy()
             # Check if there is an active_id (this situation should not appear)
             if not context.get('active_id', False):
                 logger.warning('active_id not found in context')
@@ -113,9 +115,19 @@ class ir_actions_server(osv.osv):
                     if not printer_id:
                         raise osv.except_osv(_('Error'), _('Printer not found !'))
 
-                except Exception, e:
+
+                except Exception as e:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Printer not found !'))
+
+                try:
+                    jobname = eval(str(action.printing_jobname), values)
+                    if jobname:
+                        ctx['jobname'] = jobname
+                except Exception as e:
+                    logger.error(traceback.format_exc())
+                    raise osv.except_osv(_('Error'), _('Job Name expression error !'))
+
 
                 # Get the report id
                 # TODO : Check for a specific function, on action_model, which will return False or a report id. If False is returned, use the report put in the printing_report_id.
@@ -133,7 +145,7 @@ class ir_actions_server(osv.osv):
 
                 # Print the requested ir.actions.report.xml
                 if report_id:
-                    self.pool.get('printers.list').send_printer(cr, uid, printer_id, report_id, [action_model.id], context=context)
+                    self.pool.get('printers.list').send_printer(cr, uid, printer_id, report_id, [action_model.id], context=ctx)
                 else:
                     raise osv.except_osv(_('Error'), _('Report to print not found !'))
 

@@ -73,6 +73,7 @@
                     <field name="condition"/>
                     <newline/>
                     <field name="printing_source" colspan="4" required="1"/>
+                    <field name="printing_jobname" colspan="4"/>
                     <field name="printing_function" required="0" invisible="1"/>
                     <field name="printing_report_id" domain="[('model', '=', model_name)]"/>
                 </form>
