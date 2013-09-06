@@ -137,6 +137,7 @@ class printers_list(osv.osv):
 
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 
         # Generate the command line
         command = ['lp']
@@ -148,8 +149,10 @@ class printers_list(osv.osv):
                 command.append('-h %s' % printer.server_id.address)
 
             # Add the user login in command line
-            if printer.server_id.user:
+            if printer.server_id.user and not printer.server_id.custom_user:
                 command.append('-U %s' % printer.server_id.user)
+            elif printer.server_id.custom_user:
+                command.append('-U "%s"' % user.name)
 
         # Add the printer code in command line
         command.append('-d "%s"' % printer.code)
