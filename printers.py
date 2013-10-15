@@ -45,7 +45,7 @@ def convert(name):
     return unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').replace('&', '').replace('_', '')
 
 
-class printers_server(osv.osv):
+class printers_server(osv.Model):
     """
     Manages printing servers
     """
@@ -72,10 +72,8 @@ class printers_server(osv.osv):
         'custom_user': False,
     }
 
-printers_server()
 
-
-class printers_manufacturer(osv.osv):
+class printers_manufacturer(osv.Model):
     """
     Manage printer per manufacturer
     """
@@ -89,10 +87,8 @@ class printers_manufacturer(osv.osv):
         'website': fields.char('Website', size=128, help='Website address of this manufacturer'),
     }
 
-printers_manufacturer()
 
-
-class printers_type(osv.osv):
+class printers_type(osv.Model):
     """
     Printer per type
     """
@@ -105,10 +101,8 @@ class printers_type(osv.osv):
         'description': fields.char('Description', size=64, help='Description for this type'),
     }
 
-printers_type()
 
-
-class printers_list(osv.osv):
+class printers_list(osv.Model):
     """
     Manage printers
     """
@@ -291,10 +285,8 @@ class printers_list(osv.osv):
 
         return True
 
-printers_list()
 
-
-class printers_label(osv.osv):
+class printers_label(osv.Model):
     """
     Label board
     """
@@ -308,10 +300,8 @@ class printers_label(osv.osv):
         'height': fields.integer('Height', help='Height of the label, in millimeters'),
     }
 
-printers_label()
 
-
-class printers_language(osv.osv):
+class printers_language(osv.Model):
     """
     Language support per printer
     """
@@ -322,7 +312,5 @@ class printers_language(osv.osv):
         'name': fields.char('Name', size=32, required=True, translate=True, help='Name of the language'),
         'code': fields.char('Code', size=16, required=True, help='Code of the language'),
     }
-
-printers_language()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

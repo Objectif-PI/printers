@@ -28,7 +28,6 @@
         <record model="ir.ui.view" id="view_server_action_printing_form">
             <field name="name">ir.actions.server,printing,form</field>
             <field name="model">ir.actions.server</field>
-            <field name="type">form</field>
             <field name="inherit_id" ref="base.view_server_action_form"/>
             <field name="priority" eval="30"/>
             <field name="arch" type="xml">
@@ -44,7 +43,6 @@
         <record id="view_server_action_redef_printing_tree" model="ir.ui.view">
             <field name="name">ir.actions.server.tree</field>
             <field name="model">ir.actions.server</field>
-            <field name="type">tree</field>
             <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <tree string="Print SA">
@@ -61,7 +59,6 @@
         <record id="view_server_action_redef_printing_form" model="ir.ui.view">
             <field name="name">ir.actions.server.form</field>
             <field name="model">ir.actions.server</field>
-            <field name="type">form</field>
             <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <form string="Print SA">

@@ -23,8 +23,8 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
+from openerp.osv import osv
+from openerp.osv import fields
 import traceback
 import logging
 import time
@@ -33,7 +33,7 @@ from tools.translate import _
 logger = logging.getLogger('printers')
 
 
-class ir_actions_server(osv.osv):
+class ir_actions_server(osv.Model):
     _inherit = 'ir.actions.server'
 
     _columns = {
@@ -115,7 +115,7 @@ class ir_actions_server(osv.osv):
                     if not printer_id:
                         raise osv.except_osv(_('Error'), _('Printer not found !'))
 
-                except Exception as e:
+                except Exception:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Printer not found !'))
 
@@ -123,7 +123,7 @@ class ir_actions_server(osv.osv):
                     jobname = eval(str(action.printing_jobname), values)
                     if jobname:
                         ctx['jobname'] = jobname
-                except Exception as e:
+                except Exception:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Job Name expression error !'))
 
@@ -152,7 +152,5 @@ class ir_actions_server(osv.osv):
                 result = super(ir_actions_server, self).run(cr, uid, [action.id], context=context)
 
         return result
-
-ir_actions_server()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

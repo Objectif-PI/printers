@@ -31,7 +31,6 @@
         <record model="ir.ui.view" id="res_printer_server_tree">
             <field name="name">printers.server.tree</field>
             <field name="model">printers.server</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Server">
@@ -46,7 +45,6 @@
         <record model="ir.ui.view" id="res_printer_server_form">
             <field name="name">printers.server.form</field>
             <field name="model">printers.server</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Server">
@@ -96,7 +94,6 @@
         <record model="ir.ui.view" id="res_printer_tree">
             <field name="name">printers.list.tree</field>
             <field name="model">printers.list</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Printer per server">
@@ -111,7 +108,6 @@
         <record model="ir.ui.view" id="res_printer_form">
             <field name="name">printers.list.form</field>
             <field name="model">printers.list</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printers per server">
@@ -148,7 +144,6 @@
         <record model="ir.ui.view" id="res_printer_type_tree">
             <field name="name">printers.type.tree</field>
             <field name="model">printers.type</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Printer Type">
@@ -160,7 +155,6 @@
         <record model="ir.ui.view" id="res_printer_type_form">
             <field name="name">printers.type.form</field>
             <field name="model">printers.type</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printer Type">
@@ -184,7 +178,6 @@
         <record model="ir.ui.view" id="res_printer_label_tree">
             <field name="name">printers.label.tree</field>
             <field name="model">printers.label</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Label Type">
@@ -198,7 +191,6 @@
         <record model="ir.ui.view" id="res_printer_label_form">
             <field name="name">printers.label.form</field>
             <field name="model">printers.label</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Label Type">
@@ -224,7 +216,6 @@
         <record model="ir.ui.view" id="res_printer_language_tree">
             <field name="name">printers.language.tree</field>
             <field name="model">printers.language</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Printer language">
@@ -236,7 +227,6 @@
         <record model="ir.ui.view" id="res_printer_language_form">
             <field name="name">printers.language.form</field>
             <field name="model">printers.language</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printer Language">
@@ -260,7 +250,6 @@
         <record model="ir.ui.view" id="res_printer_manufacturer_tree">
             <field name="name">printers.manufacturer.tree</field>
             <field name="model">printers.manufacturer</field>
-            <field name="type">tree</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <tree string="Manufacturer">
@@ -273,7 +262,6 @@
         <record model="ir.ui.view" id="res_printer_manufacturer_form">
             <field name="name">printers.manufacturer.form</field>
             <field name="model">printers.manufacturer</field>
-            <field name="type">form</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Manufacturer">
