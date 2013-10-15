@@ -115,7 +115,6 @@ class ir_actions_server(osv.osv):
                     if not printer_id:
                         raise osv.except_osv(_('Error'), _('Printer not found !'))
 
-
                 except Exception as e:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Printer not found !'))
@@ -127,7 +126,6 @@ class ir_actions_server(osv.osv):
                 except Exception as e:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Job Name expression error !'))
-
 
                 # Get the report id
                 # TODO : Check for a specific function, on action_model, which will return False or a report id. If False is returned, use the report put in the printing_report_id.

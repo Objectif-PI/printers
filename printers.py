@@ -39,9 +39,11 @@ import time
 
 logger = logging.getLogger('printers')
 
+
 def convert(name):
     """Convert data with no accent and upper mode"""
     return unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').replace('&', '').replace('_', '')
+
 
 class printers_server(osv.osv):
     """
@@ -138,8 +140,8 @@ class printers_list(osv.osv):
 
         # lp command is not implemented on Windows
         if sys.platform.startswith('win32'):
-            raise osv.except_osv(_('Error'), _('The actual Server OS is a Windows platform. ' \
-                                                'The printing lp command is not implemented. Unable to print !'))
+            raise osv.except_osv(_('Error'), _('The actual Server OS is a Windows platform. '
+                                               'The printing lp command is not implemented. Unable to print !'))
 
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
