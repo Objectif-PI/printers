@@ -167,9 +167,6 @@ class printers_list(osv.Model):
         if printer.fitplot:
             command.append('-o fitplot')
 
-        # Create the command to send
-        command = ' '.join(command)
-
         # Initialize printing data variable
         print_commands = None
 
@@ -201,8 +198,12 @@ class printers_list(osv.Model):
             print_file.close()
         elif print_type == 'raw':
             print_commands = print_data
+            command.append('-o raw')
         else:
             raise osv.except_osv(_('Error'), _('Unknown command type, unable to print !'))
+
+        # Create the command to send
+        command = ' '.join(command)
 
         # Run the subprocess to send the commands to the server
         logger.info('Command to execute : %s' % command)
