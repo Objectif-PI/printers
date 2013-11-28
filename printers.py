@@ -33,6 +33,7 @@ import logging
 import netsvc
 import os
 import sys
+import cups
 
 from reportlab.pdfgen import canvas
 import time
@@ -72,6 +73,24 @@ class printers_server(osv.Model):
         'custom_user': False,
     }
 
+    def update_printers(self, cr, uid, ids, context=None):
+        for server in self.browse(cr, uid, ids, context=context):
+            kwargs = {'host': 'localhost'}
+            if server.port:
+                kwargs['port'] = int(server.port)
+            # Update Printers
+            connection = cups.Connection(**kwargs)
+            printers = connection.getPrinters()
+            existing_printer = [printer.code for printer in server.printer_ids]
+            for name, printer_info in printers.iteritems():
+                if not name in existing_printer:
+                    self.pool.get('printers.list').create(cr, uid, {
+                        'name': printer_info['printer-info'],
+                        'code': name,
+                        'server_id': server.id,
+                    })
+        return True
+
 
 class printers_manufacturer(osv.Model):
     """
@@ -99,6 +118,7 @@ class printers_type(osv.Model):
     _columns = {
         'name': fields.char('Name', size=32, required=True, translate=True, help='Name of this type'),
         'description': fields.char('Description', size=64, help='Description for this type'),
+        'printer_ids': fields.one2many('printers.list', 'type_id', 'Printers'),
     }
 
 
@@ -114,9 +134,9 @@ class printers_list(osv.Model):
         'name': fields.char('Printer Name', size=64, required=True, help='Printer\'s name'),
         'code': fields.char('Printer Code', size=64, required=True, help='Printer\'s code'),
         'server_id': fields.many2one('printers.server', 'Server', required=True, help='Printer server'),
-        'type_id': fields.many2one('printers.type', 'Type', required=True, help='Printer type'),
+        'type_id': fields.many2one('printers.type', 'Type', help='Printer type'),
         'active': fields.boolean('Active', help='If checked, this link  printer/server is active'),
-        'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', required=True, help='Printer\'s manufacturer'),
+        'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', help='Printer\'s manufacturer'),
         'fitplot': fields.boolean('Fitplot', help='If checked, scales the print file to fit on the page'),
     }
 
