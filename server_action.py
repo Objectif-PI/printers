@@ -23,8 +23,8 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
+from openerp.osv import osv
+from openerp.osv import fields
 import traceback
 import logging
 import time
@@ -33,14 +33,14 @@ from tools.translate import _
 logger = logging.getLogger('printers')
 
 
-class ir_actions_server(osv.osv):
+class ir_actions_server(osv.Model):
     _inherit = 'ir.actions.server'
 
     _columns = {
         'printing_source': fields.char('Source', size=256, help='Add condition to found the id of the printer, use:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.warehouse_id.printer_id.id'),
         'printing_function': fields.char('Function', size=64, help='Name of the function to launch for printing.\nDEPRECATED'),
         'printing_report_id': fields.property('ir.actions.report.xml', method=True, string='Report', type='many2one', relation='ir.actions.report.xml', view_load=True, help='The report which will be printed'),
-        'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml'),
+        'model_name': fields.related('model_id', 'model', type='char', string='Model Name', help='Name of the model, used to filter ir.actions.report.xml', readonly=True),
         'printing_jobname': fields.char('JobName', size=256, help='Add Job Name base on browse on the objectuse:\n- c for context\n- o for object\n- time for date and hour\n- u for user\n eg: o.number on invoice'),
     }
 
@@ -115,7 +115,7 @@ class ir_actions_server(osv.osv):
                     if not printer_id:
                         raise osv.except_osv(_('Error'), _('Printer not found !'))
 
-                except Exception as e:
+                except Exception:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Printer not found !'))
 
@@ -123,7 +123,7 @@ class ir_actions_server(osv.osv):
                     jobname = eval(str(action.printing_jobname), values)
                     if jobname:
                         ctx['jobname'] = jobname
-                except Exception as e:
+                except Exception:
                     logger.error(traceback.format_exc())
                     raise osv.except_osv(_('Error'), _('Job Name expression error !'))
 
@@ -153,6 +153,9 @@ class ir_actions_server(osv.osv):
 
         return result
 
-ir_actions_server()
+    def onchange_model_id(self, cr, uid, ids, model_id, context=None):
+        model_obj = self.pool.get('ir.model')
+        model = model_obj.browse(cr, uid, model_id, context=context)
+        return {'value': {'model_name': model.model}}
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -57,6 +57,7 @@
                     <field name="user"/>
                     <field name="password" password="True"/>
                     <field name="custom_user"/>
+                    <button name="update_printers" type="object" string="Update Printer" colspan="4"/>
                     <field name="printer_ids" nolabel="1" colspan="4">
                         <tree string="Printer per server">
                             <field name="code"/>

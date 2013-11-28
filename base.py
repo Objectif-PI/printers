@@ -23,11 +23,11 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
+from openerp.osv import osv
+from openerp.osv import fields
 
 
-class res_users(osv.osv):
+class res_users(osv.Model):
     """
     User\'s printer management
     """
@@ -36,7 +36,5 @@ class res_users(osv.osv):
     _columns = {
         'context_printer_id': fields.many2one('printers.list', 'Default printer', help='Printer used by default for this user'),
     }
-
-res_users()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
