@@ -27,6 +27,7 @@ from openerp.osv import osv
 from openerp.osv import fields
 from tools.translate import _
 from openerp.modules import get_module_path
+from datetime import datetime
 import unicodedata
 import subprocess
 import logging
@@ -90,6 +91,44 @@ class printers_server(osv.Model):
                         'server_id': server.id,
                     })
         return True
+
+    def update_jobs(self, cr, uid, ids, context=None):
+        job_obj = self.pool.get('printers.job')
+        printer_obj = self.pool.get('printers.list')
+
+        # Update printers list, in order to ensure that jobs printers will be in OpenERP
+        self.update_printers(cr, uid, ids, context=context)
+
+        for server in self.browse(cr, uid, ids, context=context):
+            kwargs = {'host': server.address}
+            if server.port:
+                kwargs['port'] = int(server.port)
+            connection = cups.Connection(**kwargs)
+
+            jobs_data = connection.getJobs(which_jobs='all', requested_attributes=['job-name', 'job-id', 'printer-uri', 'job-media-progress', 'time-at-creation', 'job-state', 'job-state-reason'])
+            for cups_job_id, job_data in jobs_data.items():
+                job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=context)
+                job_values = {
+                    'name': job_data.get('job-name', ''),
+                    'server_id': server.id,
+                    'jobid': cups_job_id,
+                    'job_media_progress': job_data.get('job-media-progress', 0),
+                    'time_at_creation': job_data.get('time-at-creation', ''),
+                    'job_state': str(job_data.get('job-state', '')),
+                    'job_state_reason': job_data.get('job-state-reason', ''),
+                    'time_at_creation': datetime.fromtimestamp(job_data.get('time-at-creation', 0)).strftime('%Y-%m-%d %H:%M:%S'),
+                }
+
+                # Search for the printer in OpenERP
+                printer_uri = job_data['printer-uri']
+                printer_code = printer_uri[printer_uri.rfind('/') + 1:]
+                printer_id = printer_obj.search(cr, uid, [('server_id', '=', server.id), ('code', '=', printer_code)], context=context)
+                job_values['printer_id'] = printer_id[0]
+
+                if job_ids:
+                    job_obj.write(cr, uid, job_ids, job_values, context=context)
+                else:
+                    job_obj.create(cr, uid, job_values, context=context)
 
 
 class printers_manufacturer(osv.Model):
@@ -333,5 +372,65 @@ class printers_language(osv.Model):
         'name': fields.char('Name', size=32, required=True, translate=True, help='Name of the language'),
         'code': fields.char('Code', size=16, required=True, help='Code of the language'),
     }
+
+
+class printers_job(osv.Model):
+    _name = 'printers.job'
+    _description = 'Printing Job'
+    _order = 'jobid'
+
+    _columns = {
+        'name': fields.char('Name', size=64, help='Job name'),
+        'jobid': fields.integer('Job ID', required=True, help='CUPS id for this job'),
+        'server_id': fields.many2one('printers.server', 'Server', required=True, help='Server which host this job'),
+        'printer_id': fields.many2one('printers.list', 'Printer', required=True, help='Printer used for this job'),
+        'job_media_progress': fields.integer('Media Progress', required=True, help='Percentage of progress for this job'),
+        'time_at_creation': fields.datetime('Time At Creation', required=True, help='Date and time of creation for this job'),
+        'job_state': fields.selection([
+            ('3', 'Pending'),
+            ('4', 'Pending Held'),
+            ('5', 'Processing'),
+            ('6', 'Processing Stopped'),
+            ('7', 'Canceled'),
+            ('8', 'Aborted'),
+            ('9', 'Completed'),
+        ], 'State', help='Current state of the job'),
+        'job_state_reason': fields.selection([
+            ('none', 'No reason'),
+            ('aborted-by-system', 'Aborted by the system'),
+            ('compression-error', 'Error in the compressed data'),
+            ('document-access-error', 'The URI cannot be accessed'),
+            ('document-format-error', 'Error in the document'),
+            ('job-canceled-at-device', 'Cancelled at the device'),
+            ('job-canceled-by-operator', 'Cancelled by the printer operator'),
+            ('job-canceled-by-user', 'Cancelled by the user'),
+            ('job-completed-successfully', 'Completed successfully'),
+            ('job-completed-with-errors', 'Completed with some errors'),
+            ('job-completed(with-warnings', 'Completed with some warnings'),
+            ('job-data-insufficient', 'No data has been received'),
+            ('job-hold-until-specified', 'Currently held'),
+            ('job-incomming', 'Files are currently being received'),
+            ('job-interpreting', 'Currently being interpreted'),
+            ('job-outgoing', 'Currently being sent to the printer'),
+            ('job-printing', 'Currently printing'),
+            ('job-queued', 'Queued for printing'),
+            ('job-queued-for-marker', 'Printer needs ink/marker/toner'),
+            ('job-restartable', 'Can be restarted'),
+            ('job-transforming', 'Being transformed into a different format'),
+            ('printer-stopped', 'Printer is stopped'),
+            ('printer-stopped-partly', 'Printer state reason set to \'stopped-partly\''),
+            ('processing-to-stop-point', 'Cancelled, but printing already processed pages'),
+            ('queued-in-device', 'Queued at the output device'),
+            ('resources-are-not-ready', 'Resources not available to print the job'),
+            ('service-off-line', 'Held because the printer is offline'),
+            ('submission-interrupted', 'Files were not received in full'),
+            ('unsupported-compression', 'Compressed using an unknown algorithm'),
+            ('unsupported-document-format', 'Unsupported format'),
+        ], 'State Reason', help='Reason for the current job state'),
+    }
+
+    _sql_constraints = [
+        ('jobid_unique', 'UNIQUE(jobid, server_id)', 'The jobid of the printers job must be unique per server !'),
+    ]
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

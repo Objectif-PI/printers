@@ -55,7 +55,8 @@
                     <field name="user"/>
                     <field name="password" password="True"/>
                     <field name="custom_user"/>
-                    <button name="update_printers" type="object" string="Update Printer" colspan="4"/>
+                    <button name="update_printers" type="object" string="Update Printer" colspan="2"/>
+                    <button name="update_jobs" type="object" string="Update Jobs" colspan="2"/>
                     <field name="printer_ids" nolabel="1" colspan="4">
                         <tree string="Printer per server">
                             <field name="code"/>
@@ -281,5 +282,60 @@
         </record>
         <menuitem id="menu_admin_printing_manufacturer" name="Manufacturer" parent="menu_admin_printing" action="res_printer_manufacturer_action"/>
 
+        #
+        # Jobs list
+        #
+        <record id="view_printers_job_tree" model="ir.ui.view">
+            <field name="name">printers.job.tree</field>
+            <field name="model">printers.job</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Printer Job">
+                    <field name="jobid"/>
+                    <field name="name"/>
+                    <field name="server_id"/>
+                    <field name="printer_id"/>
+                    <field name="time_at_creation"/>
+                    <field name="job_media_progress" widget="progressbar"/>
+                    <field name="job_state"/>
+                    <field name="job_state_reason"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_printers_job_search" model="ir.ui.view">
+            <field name="name">printers.job.search</field>
+            <field name="model">printers.job</field>
+            <field name="type">search</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <search string="Printer Job">
+                    <field name="jobid"/>
+                    <field name="name"/>
+                    <field name="server_id"/>
+                    <field name="printer_id"/>
+                    <field name="time_at_creation"/>
+                    <field name="job_state"/>
+                    <field name="job_state_reason"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_open_printers_job_view">
+            <field name="name">Printer Job</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">printers.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="view_printers_job_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="act_open_printers_job_view_tree">
+            <field name="act_window_id" ref="act_open_printers_job_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_printers_job_tree"/>
+        </record>
+        <menuitem id="menu_printers_job" parent="menu_admin_printing" sequence="20" action="act_open_printers_job_view"/>
     </data>
 </openerp>
