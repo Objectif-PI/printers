@@ -75,7 +75,7 @@ class printers_server(osv.Model):
 
     def update_printers(self, cr, uid, ids, context=None):
         for server in self.browse(cr, uid, ids, context=context):
-            kwargs = {'host': 'localhost'}
+            kwargs = {'host': server.address}
             if server.port:
                 kwargs['port'] = int(server.port)
             # Update Printers
