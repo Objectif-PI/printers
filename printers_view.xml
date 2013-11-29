@@ -297,6 +297,8 @@
                     <field name="server_id"/>
                     <field name="printer_id"/>
                     <field name="time_at_creation"/>
+                    <field name="time_at_processing"/>
+                    <field name="time_at_completed"/>
                     <field name="job_media_progress" widget="progressbar"/>
                     <field name="job_state"/>
                     <field name="job_state_reason"/>
@@ -315,6 +317,8 @@
                     <field name="server_id"/>
                     <field name="printer_id"/>
                     <field name="time_at_creation"/>
+                    <field name="time_at_processing"/>
+                    <field name="time_at_completed"/>
                     <field name="job_state"/>
                     <field name="job_state_reason"/>
                 </search>

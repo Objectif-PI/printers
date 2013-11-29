@@ -105,7 +105,17 @@ class printers_server(osv.Model):
                 kwargs['port'] = int(server.port)
             connection = cups.Connection(**kwargs)
 
-            jobs_data = connection.getJobs(which_jobs='all', requested_attributes=['job-name', 'job-id', 'printer-uri', 'job-media-progress', 'time-at-creation', 'job-state', 'job-state-reason'])
+            jobs_data = connection.getJobs(which_jobs='all', requested_attributes=[
+                'job-name',
+                'job-id',
+                'printer-uri',
+                'job-media-progress',
+                'time-at-creation',
+                'job-state',
+                'job-state-reasons',
+                'time-at-processing',
+                'time-at-completed',
+            ])
             for cups_job_id, job_data in jobs_data.items():
                 job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=context)
                 job_values = {
@@ -115,8 +125,10 @@ class printers_server(osv.Model):
                     'job_media_progress': job_data.get('job-media-progress', 0),
                     'time_at_creation': job_data.get('time-at-creation', ''),
                     'job_state': str(job_data.get('job-state', '')),
-                    'job_state_reason': job_data.get('job-state-reason', ''),
+                    'job_state_reason': job_data.get('job-state-reasons', ''),
                     'time_at_creation': datetime.fromtimestamp(job_data.get('time-at-creation', 0)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'time_at_processing': job_data.get('time-at-processing', 0) and datetime.fromtimestamp(job_data.get('time-at-processing', 0)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'time_at_completed': job_data.get('time-at-completed', 0) and datetime.fromtimestamp(job_data.get('time-at-completed', 0)).strftime('%Y-%m-%d %H:%M:%S'),
                 }
 
                 # Search for the printer in OpenERP
@@ -386,6 +398,8 @@ class printers_job(osv.Model):
         'printer_id': fields.many2one('printers.list', 'Printer', required=True, help='Printer used for this job'),
         'job_media_progress': fields.integer('Media Progress', required=True, help='Percentage of progress for this job'),
         'time_at_creation': fields.datetime('Time At Creation', required=True, help='Date and time of creation for this job'),
+        'time_at_processing': fields.datetime('Time At Processing', help='Date and time of process for this job'),
+        'time_at_completed': fields.datetime('Time At Completed', help='Date and time of completion for this job'),
         'job_state': fields.selection([
             ('3', 'Pending'),
             ('4', 'Pending Held'),
