@@ -73,13 +73,17 @@ class printers_server(osv.Model):
         'custom_user': False,
     }
 
+    def _openConnection(self, cr, uid, server_id, context=None):
+        server = self.browse(cr, uid, server_id, context=context)
+        kwargs = {'host': server.address}
+        if server.port:
+            kwargs['port'] = int(server.port)
+        return cups.Connection(**kwargs)
+
     def update_printers(self, cr, uid, ids, context=None):
         for server in self.browse(cr, uid, ids, context=context):
-            kwargs = {'host': server.address}
-            if server.port:
-                kwargs['port'] = int(server.port)
             try:
-                connection = cups.Connection(**kwargs)
+                connection = self._openConnection(cr, uid, server.id, context=context)
             except:
                 logger.warning('Update cups printers : Failed to connect to cups server %s (%s:%s)' % (server.server, server.address, server.port))
                 continue
@@ -110,11 +114,8 @@ class printers_server(osv.Model):
         self.update_printers(cr, uid, ids, context=context)
 
         for server in self.browse(cr, uid, ids, context=context):
-            kwargs = {'host': server.address}
-            if server.port:
-                kwargs['port'] = int(server.port)
             try:
-                connection = cups.Connection(**kwargs)
+                connection = self._openConnection(cr, uid, server.id, context=context)
             except:
                 logger.warning('Update cups jobs : Failed to connect to cups server %s (%s:%s)' % (server.server, server.address, server.port))
                 continue
@@ -252,11 +253,8 @@ class printers_list(osv.Model):
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
 
-        kwargs = {'host': printer.server_id.address}
-        if printer.server_id.port:
-            kwargs['port'] = int(printer.server_id.port)
         try:
-            connection = cups.Connection(**kwargs)
+            connection = server_obj._openConnection(cr, uid, printer.server_id.id, context=context)
         except:
             raise osv.except_osv(_('Error'), _('Connection to the CUPS server failed\nCups server : %s (%s:%s)') % (printer.server_id.server, printer.server_id.address, printer.server_id.port))
 
