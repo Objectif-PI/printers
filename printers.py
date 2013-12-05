@@ -28,12 +28,11 @@ from openerp.osv import fields
 from tools.translate import _
 from openerp.modules import get_module_path
 from datetime import datetime
+from tempfile import mkstemp
 import unicodedata
-import subprocess
 import logging
 import netsvc
 import os
-import sys
 import cups
 
 from reportlab.pdfgen import canvas
@@ -242,49 +241,34 @@ class printers_list(osv.Model):
 
     def _command(self, cr, uid, printer_id, print_type, print_data, context=None):
         """
-        Use stdin to send data to the printer with lp or lpr command
+        Print a file on the selected CUPS server
+        TODO : When available from pycups to print stdin data, rewrite the temp file part
         """
         if context is None:
             context = {}
 
-        # lp command is not implemented on Windows
-        if sys.platform.startswith('win32'):
-            raise osv.except_osv(_('Error'), _('The actual Server OS is a Windows platform. '
-                                               'The printing lp command is not implemented. Unable to print !'))
+        server_obj = self.pool.get('printers.server')
 
         # Retrieve printer
         printer = self.browse(cr, uid, printer_id, context=context)
-        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
 
-        # Generate the command line
-        command = ['lp']
-        if printer.server_id.address:
-            # Add the server and port (if needed) in command line
-            if printer.server_id.port != 0:
-                command.append('-h %s:%s' % (printer.server_id.address, str(printer.server_id.port)))
-            else:
-                command.append('-h %s' % printer.server_id.address)
+        kwargs = {'host': printer.server_id.address}
+        if printer.server_id.port:
+            kwargs['port'] = int(printer.server_id.port)
+        try:
+            connection = cups.Connection(**kwargs)
+        except:
+            raise osv.except_osv(_('Error'), _('Connection to the CUPS server failed\nCups server : %s (%s:%s)') % (printer.server_id.server, printer.server_id.address, printer.server_id.port))
 
-            # Add the user login in command line
-            if printer.server_id.user and not printer.server_id.custom_user:
-                command.append('-U %s' % printer.server_id.user)
-            elif printer.server_id.custom_user:
-                command.append('-U "%s"' % convert(user.name))
+        # Define printing options
+        options = {}
 
-        # Add the printer code in command line
-        command.append('-d "%s"' % printer.code)
-
-        # Add Job name if define on the context
-        if context.get('jobname', ''):
-            command.append('-t "%s"' % context['jobname'])
-
-        # Add the fitplot option in command line, if needed
+        # Add the fitplot option
         if printer.fitplot:
-            command.append('-o fitplot')
+            options['fitplot'] = 'fitplot'
 
-        # Initialize printing data variable
-        print_commands = None
-
+        filename = None
+        delete_file = False
         if print_type == 'report':
             # Retrieve data to generate the report
             report_data = self.pool.get('ir.actions.report.xml').read(cr, uid, print_data['report_id'], ['model', 'report_name'], context=context)
@@ -297,46 +281,40 @@ class printers_list(osv.Model):
 
             # The commit is necessary for Jasper find the data in PostgreSQL
             cr.commit()
+
             # Generate the file to print
-            (print_commands, format) = report_service.create(cr, uid, print_data['print_ids'], datas, context=context)
+            (data, format) = report_service.create(cr, uid, print_data['print_ids'], datas, context=context)
+            fd, filename = mkstemp(suffix='.' + format, prefix='printers-')
+            os.write(fd, data)
+            os.close(fd)
+            delete_file = True
         elif print_type == 'file':
-            # Check if the file exists
-            if not os.path.exists(print_data['filename']):
-                raise osv.except_osv(_('Error'), _('File %s does not exist !') % print_data['filename'])
-
-            # Log the file name to print
-            logger.info('File to print : %s' % print_data['filename'])
-
-            # Retrieve contents of the file
-            print_file = open(print_data['filename'], 'r')
-            print_commands = print_file.read()
-            print_file.close()
+            filename = print_data['filename']
         elif print_type == 'raw':
-            print_commands = print_data
-            command.append('-o raw')
+            # Define the raw option for cups
+            options['raw'] = 'raw'
+
+            # Write the data into a file
+            fd, filename = mkstemp(suffix='.raw', prefix='printers-')
+            os.write(fd, print_data)
+            os.close(fd)
+            delete_file = True
         else:
             raise osv.except_osv(_('Error'), _('Unknown command type, unable to print !'))
 
-        # Create the command to send
-        command = ' '.join(command)
-
-        # Run the subprocess to send the commands to the server
-        logger.info('Command to execute : %s' % command)
-        sub_proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        (result_stdout, result_stderr) = sub_proc.communicate(print_commands)
-        sub_proc.stdin.close()
-
-        # Log the return values
-        logger.info('return : %s' % sub_proc.returncode)
-        logger.info('stdout : %s' % result_stdout)
-        logger.info('stderr : %s' % result_stderr)
-
-        # Remove the file and free the memory
-        del sub_proc
-        del print_commands
+        # TODO : Rewrite using the cupsCreateJob/cupsStartDocument/cupsWriteRequestData/cupsFinishDocument functions, when available in pycups, instead of writing data into a temporary file
+        jobid = False
+        try:
+            jobid = connection.printFile(printer.code, filename, context.get('jobname', 'OpenERP'), options)
+        finally:
+            # Remove the file and free the memory
+            if delete_file:
+                os.remove(filename)
 
         # Operation successful, return True
-        return True
+        logger.info('Printers Job ID : %d' % jobid)
+        server_obj.update_jobs(cr, uid, ids=[printer.server_id.id], context=context, which='all', first_job_id=jobid)
+        return jobid
 
     def send_printer(self, cr, uid, printer_id, report_id, print_ids, context=None):
         """
