@@ -478,4 +478,13 @@ class printers_job(osv.Model):
         ('jobid_unique', 'UNIQUE(jobid, server_id)', 'The jobid of the printers job must be unique per server !'),
     ]
 
+    def cancel(self, cr, uid, ids, context=None, purge_job=False):
+        server_obj = self.pool.get('printers.server')
+        for job in self.browse(cr, uid, ids, context=context):
+            connection = server_obj._openConnection(cr, uid, job.server_id.id, context=context)
+            connection.cancelJob(job.jobid, purge_job=purge_job)
+            server_obj.update_jobs(cr, uid, ids=[job.server_id.id], context=context, which='all', first_job_id=job.jobid)
+
+        return True
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
