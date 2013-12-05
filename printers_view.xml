@@ -67,6 +67,7 @@
                         <form string="Printers per server">
                             <field name="name" select="1"/>
                             <field name="code" select="1"/>
+                            <field name="uri"/>
                             <field name="type_id" select="2"/>
                             <field name="manufacturer_id" select="2"/>
                             <field name="active" select="2"/>
@@ -116,6 +117,7 @@
                     <field name="name" select="1"/>
                     <field name="code" select="1"/>
                     <field name="server_id" select="1"/>
+                    <field name="uri"/>
                     <field name="type_id" select="2"/>
                     <field name="manufacturer_id" select="2"/>
                     <field name="active" select="2"/>

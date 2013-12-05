@@ -233,6 +233,7 @@ class printers_list(osv.Model):
         'active': fields.boolean('Active', help='If checked, this link  printer/server is active'),
         'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', help='Printer\'s manufacturer'),
         'fitplot': fields.boolean('Fitplot', help='If checked, scales the print file to fit on the page'),
+        'uri': fields.char('URI', size=256, required=True, help='URI of this printer'),
     }
 
     _defaults = {
