@@ -97,9 +97,12 @@ class printers_server(osv.Model):
                     })
         return True
 
-    def update_jobs(self, cr, uid, ids, context=None):
+    def update_jobs(self, cr, uid, ids=None, context=None, which='not-completed'):
         job_obj = self.pool.get('printers.job')
         printer_obj = self.pool.get('printers.list')
+
+        if ids is None:
+            ids = self.search(cr, uid, [], context=context)
 
         # Update printers list, in order to ensure that jobs printers will be in OpenERP
         self.update_printers(cr, uid, ids, context=context)
