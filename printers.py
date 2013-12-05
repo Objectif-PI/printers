@@ -411,7 +411,7 @@ class printers_language(osv.Model):
 class printers_job(osv.Model):
     _name = 'printers.job'
     _description = 'Printing Job'
-    _order = 'jobid'
+    _order = 'jobid DESC'
 
     _columns = {
         'name': fields.char('Name', size=64, help='Job name'),
