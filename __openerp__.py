@@ -42,6 +42,7 @@
         'server_action_view.xml',
         'printers_view.xml',
         'printers_data.xml',
+        'ir_cron_data.xml',
     ],
     'demo_xml': [],
     'test': [],
