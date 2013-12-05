@@ -147,7 +147,9 @@ class printers_server(osv.Model):
                         'time-at-completed',
                     ]))
 
+            all_cups_job_ids = set()
             for cups_job_id, job_data in jobs_data.items():
+                all_cups_job_ids.add(cups_job_id)
                 job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=context)
                 job_values = {
                     'name': job_data.get('job-name', ''),
@@ -172,6 +174,12 @@ class printers_server(osv.Model):
                     job_obj.write(cr, uid, job_ids, job_values, context=context)
                 else:
                     job_obj.create(cr, uid, job_values, context=context)
+
+            # Deactive purged jobs
+            purged_job_ids = job_obj.search(cr, uid, [('jobid', 'not in', list(all_cups_job_ids)), ('active', '=', True)], context=context)
+            job_obj.write(cr, uid, purged_job_ids, {'active': False}, context=context)
+
+        return True
 
 
 class printers_manufacturer(osv.Model):
@@ -424,6 +432,7 @@ class printers_job(osv.Model):
 
     _columns = {
         'name': fields.char('Name', size=64, help='Job name'),
+        'active': fields.boolean('Active', help='Unchecked if the job is purged from cups'),
         'jobid': fields.integer('Job ID', required=True, help='CUPS id for this job'),
         'server_id': fields.many2one('printers.server', 'Server', required=True, help='Server which host this job'),
         'printer_id': fields.many2one('printers.list', 'Printer', required=True, help='Printer used for this job'),
@@ -472,6 +481,10 @@ class printers_job(osv.Model):
             ('unsupported-compression', 'Compressed using an unknown algorithm'),
             ('unsupported-document-format', 'Unsupported format'),
         ], 'State Reason', help='Reason for the current job state'),
+    }
+
+    _defaults = {
+        'active': True,
     }
 
     _sql_constraints = [
