@@ -97,7 +97,10 @@ class printers_server(osv.Model):
                     })
         return True
 
-    def update_jobs(self, cr, uid, ids=None, context=None, which='not-completed'):
+    def update_jobs(self, cr, uid, ids=None, context=None, which='all', first_job_id=-1):
+        if context is None:
+            context = {}
+
         job_obj = self.pool.get('printers.job')
         printer_obj = self.pool.get('printers.list')
 
@@ -118,7 +121,7 @@ class printers_server(osv.Model):
                 continue
 
             # Retrieve asked job data
-            jobs_data = connection.getJobs(which_jobs=which, requested_attributes=[
+            jobs_data = connection.getJobs(which_jobs=which, first_job_id=first_job_id, requested_attributes=[
                 'job-name',
                 'job-id',
                 'printer-uri',
@@ -150,9 +153,10 @@ class printers_server(osv.Model):
             all_cups_job_ids = set()
             for cups_job_id, job_data in jobs_data.items():
                 all_cups_job_ids.add(cups_job_id)
-                job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=context)
+                job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=dict(context, active_test=False))
                 job_values = {
                     'name': job_data.get('job-name', ''),
+                    'active': True,
                     'server_id': server.id,
                     'jobid': cups_job_id,
                     'job_media_progress': job_data.get('job-media-progress', 0),
@@ -176,8 +180,9 @@ class printers_server(osv.Model):
                     job_obj.create(cr, uid, job_values, context=context)
 
             # Deactive purged jobs
-            purged_job_ids = job_obj.search(cr, uid, [('jobid', 'not in', list(all_cups_job_ids)), ('active', '=', True)], context=context)
-            job_obj.write(cr, uid, purged_job_ids, {'active': False}, context=context)
+            if which == 'all' and first_job_id == -1:
+                purged_job_ids = job_obj.search(cr, uid, [('jobid', 'not in', list(all_cups_job_ids))], context=context)
+                job_obj.write(cr, uid, purged_job_ids, {'active': False}, context=context)
 
         return True
 
