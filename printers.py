@@ -129,6 +129,24 @@ class printers_server(osv.Model):
                 'time-at-processing',
                 'time-at-completed',
             ])
+
+            # Retrieve known uncompleted jobs data to update them
+            if which == 'not-completed':
+                min_job_ids = job_obj.search(cr, uid, [('job_state', 'not in', ('7', '8', '9')), ('active', '=', True)], limit=1, order='jobid', context=context)
+                if min_job_ids:
+                    min_job_id = job_obj.browse(cr, uid, min_job_ids[0], context=context).jobid
+                    jobs_data.update(connection.getJobs(which_jobs='completed', first_job_id=min_job_id, requested_attributes=[
+                        'job-name',
+                        'job-id',
+                        'printer-uri',
+                        'job-media-progress',
+                        'time-at-creation',
+                        'job-state',
+                        'job-state-reasons',
+                        'time-at-processing',
+                        'time-at-completed',
+                    ]))
+
             for cups_job_id, job_data in jobs_data.items():
                 job_ids = job_obj.search(cr, uid, [('jobid', '=', cups_job_id), ('server_id', '=', server.id)], context=context)
                 job_values = {
