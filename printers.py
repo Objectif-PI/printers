@@ -90,14 +90,19 @@ class printers_server(osv.Model):
 
             # Update Printers
             printers = connection.getPrinters()
-            existing_printer = [printer.code for printer in server.printer_ids]
+            existing_printers = dict([(printer.code, printer.id) for printer in server.printer_ids])
             for name, printer_info in printers.iteritems():
-                if not name in existing_printer:
-                    self.pool.get('printers.list').create(cr, uid, {
-                        'name': printer_info['printer-info'],
-                        'code': name,
-                        'server_id': server.id,
-                    })
+                printer_values = {
+                    'name': printer_info['printer-info'],
+                    'code': name,
+                    'server_id': server.id,
+                    'uri': printer_info['printer-uri-supported'],
+                }
+                if not name in existing_printers.keys():
+                    self.pool.get('printers.list').create(cr, uid, printer_values, context=context)
+                else:
+                    self.pool.get('printers.list').write(cr, uid, existing_printers[name], printer_values, context=context)
+
         return True
 
     def update_jobs(self, cr, uid, ids=None, context=None, which='all', first_job_id=-1):
