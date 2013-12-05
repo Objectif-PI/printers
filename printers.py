@@ -79,8 +79,13 @@ class printers_server(osv.Model):
             kwargs = {'host': server.address}
             if server.port:
                 kwargs['port'] = int(server.port)
+            try:
+                connection = cups.Connection(**kwargs)
+            except:
+                logger.warning('Update cups printers : Failed to connect to cups server %s (%s:%s)' % (server.server, server.address, server.port))
+                continue
+
             # Update Printers
-            connection = cups.Connection(**kwargs)
             printers = connection.getPrinters()
             existing_printer = [printer.code for printer in server.printer_ids]
             for name, printer_info in printers.iteritems():
@@ -103,9 +108,14 @@ class printers_server(osv.Model):
             kwargs = {'host': server.address}
             if server.port:
                 kwargs['port'] = int(server.port)
-            connection = cups.Connection(**kwargs)
+            try:
+                connection = cups.Connection(**kwargs)
+            except:
+                logger.warning('Update cups jobs : Failed to connect to cups server %s (%s:%s)' % (server.server, server.address, server.port))
+                continue
 
-            jobs_data = connection.getJobs(which_jobs='all', requested_attributes=[
+            # Retrieve asked job data
+            jobs_data = connection.getJobs(which_jobs=which, requested_attributes=[
                 'job-name',
                 'job-id',
                 'printer-uri',
