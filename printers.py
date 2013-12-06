@@ -391,6 +391,24 @@ class printers_list(osv.Model):
 
         return True
 
+    def enable(self, cr, uid, ids, context=None):
+        server_obj = self.pool.get('printers.server')
+        for printer in self.browse(cr, uid, ids, context=context):
+            connection = server_obj._openConnection(cr, uid, printer.server_id.id, context=context)
+            connection.enablePrinter(printer.code)
+            server_obj.update_printers(cr, uid, ids=[printer.server_id.id], context=context)
+
+        return True
+
+    def disable(self, cr, uid, ids, context=None):
+        server_obj = self.pool.get('printers.server')
+        for printer in self.browse(cr, uid, ids, context=context):
+            connection = server_obj._openConnection(cr, uid, printer.server_id.id, context=context)
+            connection.disablePrinter(printer.code)
+            server_obj.update_printers(cr, uid, ids=[printer.server_id.id], context=context)
+
+        return True
+
 
 class printers_label(osv.Model):
     """
