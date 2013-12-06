@@ -62,11 +62,15 @@
                             <field name="code"/>
                             <field name="name"/>
                             <field name="type_id"/>
+                            <field name="printer_state"/>
+                            <field name="printer_state_message"/>
                             <field name="active"/>
                         </tree>
                         <form string="Printers per server">
                             <field name="name" select="1"/>
                             <field name="code" select="1"/>
+                            <field name="printer_state"/>
+                            <field name="printer_state_message"/>
                             <field name="uri"/>
                             <field name="type_id" select="2"/>
                             <field name="manufacturer_id" select="2"/>
@@ -105,6 +109,8 @@
                     <field name="server_id"/>
                     <field name="type_id"/>
                     <field name="active"/>
+                            <field name="printer_state"/>
+                            <field name="printer_state_message"/>
                 </tree>
             </field>
         </record>
@@ -117,6 +123,8 @@
                     <field name="name" select="1"/>
                     <field name="code" select="1"/>
                     <field name="server_id" select="1"/>
+                    <field name="printer_state"/>
+                    <field name="printer_state_message"/>
                     <field name="uri"/>
                     <field name="type_id" select="2"/>
                     <field name="manufacturer_id" select="2"/>

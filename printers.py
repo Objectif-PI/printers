@@ -97,6 +97,8 @@ class printers_server(osv.Model):
                     'code': name,
                     'server_id': server.id,
                     'uri': printer_info['printer-uri-supported'],
+                    'printer_state': str(printer_info['printer-state']),
+                    'printer_state_message': printer_info['printer-state-message'],
                 }
                 if not name in existing_printers.keys():
                     self.pool.get('printers.list').create(cr, uid, printer_values, context=context)
@@ -239,6 +241,12 @@ class printers_list(osv.Model):
         'manufacturer_id': fields.many2one('printers.manufacturer', 'Manufacturer', help='Printer\'s manufacturer'),
         'fitplot': fields.boolean('Fitplot', help='If checked, scales the print file to fit on the page'),
         'uri': fields.char('URI', size=256, required=True, help='URI of this printer'),
+        'printer_state': fields.selection([
+            ('3', 'Idle'),
+            ('4', 'Printing'),
+            ('5', 'Stopped'),
+        ], 'State', readonly=True, help='Current state of the printer'),
+        'printer_state_message': fields.char('State Message', size=256, readonly=True, help='Messages associated to the current state of the printer'),
     }
 
     _defaults = {
