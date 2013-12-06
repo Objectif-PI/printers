@@ -450,7 +450,7 @@ class printers_job(osv.Model):
             ('job-completed(with-warnings', 'Completed with some warnings'),
             ('job-data-insufficient', 'No data has been received'),
             ('job-hold-until-specified', 'Currently held'),
-            ('job-incomming', 'Files are currently being received'),
+            ('job-incoming', 'Files are currently being received'),
             ('job-interpreting', 'Currently being interpreted'),
             ('job-outgoing', 'Currently being sent to the printer'),
             ('job-printing', 'Currently printing'),
