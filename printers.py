@@ -391,6 +391,15 @@ class printers_list(osv.Model):
 
         return True
 
+    def cancelAll(self, cr, uid, ids, context=None, purge_jobs=False):
+        server_obj = self.pool.get('printers.server')
+        for printer in self.browse(cr, uid, ids, context=context):
+            connection = server_obj._openConnection(cr, uid, printer.server_id.id, context=context)
+            connection.cancelAllJobs(name=printer.code, purge_jobs=purge_jobs)
+            server_obj.update_jobs(cr, uid, ids=[printer.server_id.id], context=context, which='completed')
+
+        return True
+
     def enable(self, cr, uid, ids, context=None):
         server_obj = self.pool.get('printers.server')
         for printer in self.browse(cr, uid, ids, context=context):

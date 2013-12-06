@@ -129,6 +129,7 @@
                     <field name="type_id" select="2"/>
                     <field name="manufacturer_id" select="2"/>
                     <field name="active" select="2"/>
+                    <button string="Cancel All Jobs" icon="gtk-cancel" type="object" name="cancelAll"/>
                     <group colspan="4">
                         <button string="Test Page" icon="gtk-print" type="object" name="print_test" colspan="4"/>
                     </group>
