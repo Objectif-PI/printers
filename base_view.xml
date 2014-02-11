@@ -34,7 +34,7 @@
             <field name="priority" eval="40"/>
             <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='tz']" position="after">
+                <xpath expr="/form/group/field[@name='context_tz']" position="after">
                     <field name="context_printer_id" readonly="0"/>
                 </xpath>
             </field>
