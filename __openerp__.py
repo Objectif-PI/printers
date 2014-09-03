@@ -46,7 +46,6 @@
     ],
     'demo_xml': [],
     'test': [],
-    #'external_dependancies': {'python': ['kombu'], 'bin': ['which']},
     'installable': True,
     'active': False,
     'license': 'AGPL-3',

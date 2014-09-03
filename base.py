@@ -28,6 +28,7 @@ from openerp.osv import fields
 
 
 class res_users(osv.Model):
+
     """
     User\'s printer management
     """

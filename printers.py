@@ -47,6 +47,7 @@ def convert(name):
 
 
 class printers_server(osv.Model):
+
     """
     Manages printing servers
     """
@@ -100,7 +101,7 @@ class printers_server(osv.Model):
                     'printer_state': str(printer_info['printer-state']),
                     'printer_state_message': printer_info['printer-state-message'],
                 }
-                if not name in existing_printers.keys():
+                if name not in existing_printers.keys():
                     self.pool.get('printers.list').create(cr, uid, printer_values, context=context)
                 else:
                     self.pool.get('printers.list').write(cr, uid, existing_printers[name], printer_values, context=context)
@@ -195,6 +196,7 @@ class printers_server(osv.Model):
 
 
 class printers_manufacturer(osv.Model):
+
     """
     Manage printer per manufacturer
     """
@@ -210,6 +212,7 @@ class printers_manufacturer(osv.Model):
 
 
 class printers_type(osv.Model):
+
     """
     Printer per type
     """
@@ -235,6 +238,7 @@ class PrintersEncoding(osv.Model):
 
 
 class printers_list(osv.Model):
+
     """
     Manage printers
     """
@@ -431,6 +435,7 @@ class printers_list(osv.Model):
 
 
 class printers_label(osv.Model):
+
     """
     Label board
     """
@@ -446,6 +451,7 @@ class printers_label(osv.Model):
 
 
 class printers_language(osv.Model):
+
     """
     Language support per printer
     """
