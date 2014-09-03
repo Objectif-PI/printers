@@ -72,6 +72,22 @@
         </record>
 
         #
+        # Encodings
+        #
+        <record model="printers.encoding" id="encoding_utf8">
+            <field name="name">UTF-8</field>
+            <field name="code">utf-8</field>
+        </record>
+        <record model="printers.encoding" id="encoding_iso8859">
+            <field name="name">ISO8859</field>
+            <field name="code">iso8859</field>
+        </record>
+        <record model="printers.encoding" id="encoding_cp850">
+            <field name="name">CP850</field>
+            <field name="code">cp850</field>
+        </record>
+
+        #
         # Printer Languages
         #
         <record model="printers.language" id="language_pcli">

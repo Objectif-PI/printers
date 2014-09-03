@@ -224,6 +224,16 @@ class printers_type(osv.Model):
     }
 
 
+class PrintersEncoding(osv.Model):
+    _name = 'printers.encoding'
+    _description = 'Printer Encoding'
+
+    _columns = {
+        'name': fields.char('Name', size=64, required=True, help='Name of the encoding'),
+        'code': fields.char('Code', size=16, help='Encoding code'),
+    }
+
+
 class printers_list(osv.Model):
     """
     Manage printers
@@ -247,6 +257,7 @@ class printers_list(osv.Model):
             ('5', 'Stopped'),
         ], 'State', readonly=True, help='Current state of the printer'),
         'printer_state_message': fields.char('State Message', size=256, readonly=True, help='Messages associated to the current state of the printer'),
+        'encoding_id': fields.many2one('printers.encoding', 'Encoding', required=True, help='Encoding used by this printer'),
     }
 
     _defaults = {

@@ -128,6 +128,7 @@
                     <field name="uri"/>
                     <field name="type_id" select="2"/>
                     <field name="manufacturer_id" select="2"/>
+                    <field name="encoding_id" select="2"/>
                     <field name="active" select="2"/>
                     <button string="Cancel All Jobs" icon="gtk-cancel" type="object" name="cancelAll"/>
                     <group colspan="4">
@@ -184,6 +185,40 @@
             <field name="view_id" ref="res_printer_type_tree"/>
         </record>
         <menuitem id="menu_admin_printing_printer_type" name="Printer type" parent="menu_admin_printing" action="res_printer_type_action"/>
+
+        #
+        # Printers encoding
+        #
+        <record model="ir.ui.view" id="res_printer_encoding_tree">
+            <field name="name">printers.encoding.tree</field>
+            <field name="model">printers.encoding</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Printer Encoding">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="res_printer_encoding_form">
+            <field name="name">printers.encoding.form</field>
+            <field name="model">printers.encoding</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Printer Encoding">
+                    <field name="name" select="1"/>
+                    <field name="code" select="2"/>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="res_printer_encoding_action">
+            <field name="name">Printer encoding</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">printers.encoding</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="res_printer_encoding_tree"/>
+        </record>
+        <menuitem id="menu_admin_printing_printer_encoding" name="Printer encoding" parent="menu_admin_printing" action="res_printer_encoding_action"/>
 
         #
         # Label type
