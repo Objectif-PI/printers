@@ -267,6 +267,7 @@ class printers_list(osv.Model):
     _defaults = {
         'active': True,
         'fitplot': False,
+        'encoding_id': lambda self, cr, uid, context=None: self.pool.get('printers.encoding').search(cr, uid, [], limit=1, context=context)[0],
     }
 
     def _command(self, cr, uid, printer_id, print_type, print_data, context=None):
