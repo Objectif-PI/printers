@@ -246,6 +246,14 @@ class printers_list(osv.Model):
     _description = 'List of printers per server'
     _order = 'name'
 
+    def _get_default_encoding(self, cr, uid, context=None):
+        """
+        Returns a default encoding (first found)
+        Nothing if no encoding is in the database
+        """
+        encoding_ids = self.pool.get('printers.encoding').search(cr, uid, [], limit=1, context=context)
+        return encoding_ids and encoding_ids[0] or False
+
     _columns = {
         'name': fields.char('Printer Name', size=64, required=True, help='Printer\'s name'),
         'code': fields.char('Printer Code', size=64, required=True, help='Printer\'s code'),
@@ -267,7 +275,7 @@ class printers_list(osv.Model):
     _defaults = {
         'active': True,
         'fitplot': False,
-        'encoding_id': lambda self, cr, uid, context=None: self.pool.get('printers.encoding').search(cr, uid, [], limit=1, context=context)[0],
+        'encoding_id': _get_default_encoding,
     }
 
     def _command(self, cr, uid, printer_id, print_type, print_data, context=None):
