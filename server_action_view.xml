@@ -40,6 +40,8 @@
                 </data>
             </field>
         </record>
+        
+        
         <record id="view_server_action_redef_printing_tree" model="ir.ui.view">
             <field name="name">ir.actions.server.tree</field>
             <field name="model">ir.actions.server</field>
@@ -62,17 +64,19 @@
             <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <form string="Print SA">
-                    <field name="name" select="1"/>
-                    <field name="model_id" on_change="onchange_model_id(model_id)"/>
-                    <field name="model_name" invisible="1"/>
-                    <field name="state" invisible="1"/>
-                    <field name="sequence"/>
-                    <field name="condition"/>
-                    <newline/>
-                    <field name="printing_source" colspan="4" required="1"/>
-                    <field name="printing_jobname" colspan="4"/>
-                    <field name="printing_function" required="0" invisible="1"/>
-                    <field name="printing_report_id" domain="[('model', '=', model_name)]"/>
+                	<group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="model_id"/>
+	                    <field name="model_name" invisible="1"/>
+	                    <field name="state" invisible="1"/>
+	                    <field name="sequence"/>
+	                    <field name="condition"/>
+	                    <newline/>
+	                    <field name="printing_source" colspan="4" required="1"/>
+	                    <field name="printing_jobname" colspan="4"/>
+	                    <field name="printing_function" required="0" invisible="1"/>
+	                    <field name="printing_report_id" domain="[('model', '=', model_name)]"/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -97,7 +101,7 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_server_action_redef_printing_tree"/>
         </record>
-        <menuitem id="menu_server_action_redef_printing" parent="menu_admin_printing" sequence="20" action="act_open_server_action_redef_printing_view"/>
+        <menuitem id="menu_server_action_redef_printing" parent="menu_admin_printing" action="act_open_server_action_redef_printing_view"/>
 
     </data>
 </openerp>

@@ -5,6 +5,8 @@
 #    Copyright (C) 2011 SYLEAM Info Services (<http://www.Syleam.fr/>)
 #              Sylvain Garancher <sylvain.garancher@syleam.fr>
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
+#    Copyright (C) 2015 Objectif-PI (<http://www.objectif-pi.com>).
+#       Damien CRIER <damien.crier@objectif-pi.com>
 #
 #    This file is a part of printers
 #

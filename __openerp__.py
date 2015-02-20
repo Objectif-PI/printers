@@ -5,6 +5,8 @@
 #    Copyright (C) 2011 SYLEAM Info Services (<http://www.Syleam.fr/>)
 #              Sylvain Garancher <sylvain.garancher@syleam.fr>
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
+#    Copyright (C) 2015 Objectif-PI (<http://www.objectif-pi.com>).
+#       Damien CRIER <damien.crier@objectif-pi.com>
 #
 #    This file is a part of printers
 #
@@ -23,19 +25,19 @@
 #
 ##############################################################################
 
+
 {
     'name': 'Printers',
     'version': '1.1',
     'category': 'Tools',
-    'description': """Allow to manage printers un OpenERP""",
+    'description': """Allow to manage printers in OpenERP""",
     'author': 'SYLEAM',
     'website': 'http://www.syleam.fr/',
     'depends': [
         'base',
     ],
-    'init_xml': [],
     'images': [],
-    'update_xml': [
+    'data': [
         'security/ir.model.access.csv',
         'menu_view.xml',
         'base_view.xml',
@@ -44,10 +46,12 @@
         'printers_data.xml',
         'ir_cron_data.xml',
     ],
-    'demo_xml': [],
+
+    'qweb': [],
+    'demo': [],
     'test': [],
     'installable': True,
-    'active': False,
+    'auto_install': False,
     'license': 'AGPL-3',
 }
 

@@ -48,15 +48,17 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Server">
-                    <field name="server" select="1"/>
-                    <field name="address" select="1"/>
-                    <field name="port"/>
-                    <field name="active" select="2"/>
-                    <field name="user"/>
-                    <field name="password" password="True"/>
-                    <field name="custom_user"/>
-                    <button name="update_printers" type="object" string="Update Printer" colspan="2"/>
-                    <button name="update_jobs" type="object" string="Update Jobs" colspan="2"/>
+                	<group colspan="4">
+	                    <field name="server" select="1"/>
+	                    <field name="address" select="1"/>
+	                    <field name="port"/>
+	                    <field name="active" select="2"/>
+	                    <field name="user"/>
+	                    <field name="password" password="True"/>
+	                    <field name="custom_user"/>
+	                    <button name="update_printers" type="object" string="Update Printer" colspan="2"/>
+	                    <button name="update_jobs" type="object" string="Update Jobs" colspan="2"/>
+                    </group>
                     <field name="printer_ids" nolabel="1" colspan="4">
                         <tree string="Printer per server">
                             <field name="code"/>
@@ -67,20 +69,22 @@
                             <field name="active"/>
                         </tree>
                         <form string="Printers per server">
-                            <field name="name" select="1"/>
-                            <field name="code" select="1"/>
-                            <field name="printer_state"/>
-                            <field name="printer_state_message"/>
-                            <field name="uri"/>
-                            <field name="type_id" select="2"/>
-                            <field name="manufacturer_id" select="2"/>
-                            <field name="active" select="2"/>
-                            <notebook colspan="4">
-                                <page string="Options">
-                                    <separator string="Specify parameter for this printer" colspan="4"/>
-                                    <field name="fitplot"/>
-                                </page>
-                            </notebook>
+	                        <group colspan="4">
+	                            <field name="name" select="1"/>
+	                            <field name="code" select="1"/>
+	                            <field name="printer_state"/>
+	                            <field name="printer_state_message"/>
+	                            <field name="uri"/>
+	                            <field name="type_id" select="2"/>
+	                            <field name="manufacturer_id" select="2"/>
+	                            <field name="active" select="2"/>
+	                            <notebook colspan="4">
+	                                <page string="Options">
+	                                    <separator string="Specify parameter for this printer" colspan="4"/>
+	                                    <field name="fitplot"/>
+	                                </page>
+	                            </notebook>
+	                        </group>
                         </form>
                     </field>
                 </form>
@@ -109,8 +113,8 @@
                     <field name="server_id"/>
                     <field name="type_id"/>
                     <field name="active"/>
-                            <field name="printer_state"/>
-                            <field name="printer_state_message"/>
+                    <field name="printer_state"/>
+                    <field name="printer_state_message"/>
                 </tree>
             </field>
         </record>
@@ -120,18 +124,20 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printers per server">
-                    <field name="name" select="1"/>
-                    <field name="code" select="1"/>
-                    <field name="server_id" select="1"/>
-                    <field name="printer_state"/>
-                    <field name="printer_state_message"/>
-                    <field name="uri"/>
-                    <field name="type_id" select="2"/>
-                    <field name="manufacturer_id" select="2"/>
-                    <field name="encoding_id" select="2"/>
-                    <field name="active" select="2"/>
-                    <button string="Cancel All Jobs" icon="gtk-cancel" type="object" name="cancelAll"/>
+                	<group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="code" select="1"/>
+	                    <field name="server_id" select="1"/>
+	                    <field name="printer_state"/>
+	                    <field name="printer_state_message"/>
+	                    <field name="uri"/>
+	                    <field name="type_id" select="2"/>
+	                    <field name="manufacturer_id" select="2"/>
+	                    <field name="encoding_id" select="2"/>
+	                    <field name="active" select="2"/>
+                    </group>
                     <group colspan="4">
+	                    <button string="Cancel All Jobs" icon="gtk-cancel" type="object" name="cancelAll" colspan="4"/>
                         <button string="Test Page" icon="gtk-print" type="object" name="print_test" colspan="4"/>
                     </group>
                     <notebook colspan="4">
@@ -172,8 +178,10 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printer Type">
-                    <field name="name" select="1"/>
-                    <field name="description" select="2"/>
+	                <group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="description" select="2"/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -206,8 +214,10 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printer Encoding">
-                    <field name="name" select="1"/>
-                    <field name="code" select="2"/>
+	                <group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="code" select="2"/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -242,10 +252,12 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Label Type">
-                    <field name="name" select="1"/>
-                    <field name="type_id" select="2"/>
-                    <field name="width" select="1"/>
-                    <field name="height" select="1"/>
+	                <group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="type_id" select="2"/>
+	                    <field name="width" select="1"/>
+	                    <field name="height" select="1"/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -278,8 +290,10 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Printer Language">
-                    <field name="name" select="1"/>
-                    <field name="code" select="1"/>
+	                <group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="code" select="1"/>
+                    </group>
                 </form>
             </field>
         </record>
@@ -313,9 +327,11 @@
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
                 <form string="Manufacturer">
-                    <field name="name" select="1"/>
-                    <field name="code" select="1"/>
-                    <field name="website" widget="url"/>
+	                <group colspan="4">
+	                    <field name="name" select="1"/>
+	                    <field name="code" select="1"/>
+	                    <field name="website" widget="url"/>
+                    </group>
                 </form>
             </field>
         </record>

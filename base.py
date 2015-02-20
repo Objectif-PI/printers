@@ -5,6 +5,8 @@
 #    Copyright (C) 2011 SYLEAM Info Services (<http://www.Syleam.fr/>)
 #              Sylvain Garancher <sylvain.garancher@syleam.fr>
 #              Christophe CHAUVET <christophe.chauvet@syleam.fr>
+#    Copyright (C) 2015 Objectif-PI (<http://www.objectif-pi.com>).
+#       Damien CRIER <damien.crier@objectif-pi.com>
 #
 #    This file is a part of printers
 #
@@ -23,19 +25,20 @@
 #
 ##############################################################################
 
-from openerp.osv import osv
-from openerp.osv import fields
+from openerp import models
+from openerp import fields
+from openerp import api
+from openerp import _
 
 
-class res_users(osv.Model):
+class res_users(models.Model):
 
     """
     User\'s printer management
     """
     _inherit = 'res.users'
 
-    _columns = {
-        'context_printer_id': fields.many2one('printers.list', 'Default printer', help='Printer used by default for this user'),
-    }
+    context_printer_id = fields.Many2one('printers.list', string='Default printer', required=False, ondelete='restrict', help='Printer used by default for this user')
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
