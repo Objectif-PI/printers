@@ -41,7 +41,6 @@ from datetime import datetime
 from tempfile import mkstemp
 import unicodedata
 import logging
-# import netsvc # ???
 import os
 import cups
 
@@ -117,13 +116,12 @@ class printers_server(models.Model):
         This method empty all temporary values, scenario, step and reference_document
         Because if we want reset term when error we must use sql query, it is bad in production
         """
-#         server_obj = self.env['printers.server']
-        self._update_jobs()
+        self._update_jobs(which="all", first_job_id=-1)
 
         return True
 
     @api.model
-    def _update_jobs(self, nothing=None, which='all', first_job_id=-1):
+    def _update_jobs(self, which='all', first_job_id=-1):
         job_obj = self.env['printers.job']
         printer_obj = self.env['printers.list']
 
@@ -254,19 +252,6 @@ class PrintersEncoding(models.Model):
     code = fields.Char(string='Code', size=16, required=True, help='Encoding code')
 
 
-class res_partner(models.Model):
-    _inherit = 'res.partner'
-
-    @api.one
-    def print_test(self):
-        printer_obj = self.env['printers.list']
-
-        printer_rs = self.env.user.context_printer_id
-
-        printer_rs.send_printer(57, self.ids)  # 57 = etiquettes
-        return True
-
-
 class printers_list(models.Model):
 
     """
@@ -377,8 +362,6 @@ class printers_list(models.Model):
 
         # Operation successful, return True
         logger.info('Printers Job ID : %d' % jobid)
-        import pdb
-        pdb.set_trace()
         printer.server_id._update_jobs(which='all', first_job_id=jobid)
         return jobid
 
@@ -529,7 +512,7 @@ class printers_job(models.Model):
         ('jobid_unique', 'UNIQUE(jobid, server_id)', 'The jobid of the printers job must be unique per server !'),
     ]
 
-    @api.model
+    @api.multi
     def cancel(self, purge_job=False):
         server_obj = self.env['printers.server']
         for job in self:

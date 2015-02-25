@@ -34,7 +34,7 @@
             <field eval="False" name="doall"/>
             <field name="model">printers.server</field>
             <field name="function">_update_jobs</field>
-            <field name="args">(None, {}, 'all')</field>
+            <field name="args">('all', -1)</field>
         </record>
 
         <record forcecreate="True" id="ir_cron_update_not_completed_cups_jobs" model="ir.cron">

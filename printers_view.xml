@@ -142,8 +142,10 @@
                     </group>
                     <notebook colspan="4">
                         <page string="Options">
-                            <separator string="Specify parameter for this printer" colspan="4"/>
-                            <field name="fitplot"/>
+                        	<group colspan="4">
+	                            <separator string="Specify parameter for this printer" colspan="4"/>
+	                            <field name="fitplot"/>
+                            </group>
                         </page>
                     </notebook>
                 </form>
